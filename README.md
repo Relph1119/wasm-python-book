@@ -30,9 +30,21 @@ src------------------------------------WebAssembly代码
 **注意：** 将src和develop_code设置成sources Root，可避免代码的引包报错。
 
 ## 代码编写与运行结果
-项目的所有运行都是采用直接运行main.py的方式，请读者运行时注意。
+项目的所有运行都是采用直接运行cmd/main.py的方式，请读者运行时注意。
 
 ### 第2章-二进制格式
+完成了模块解码器和dump程序。
+传入参数：
+> -d "wasm-python-book\js\ch01_hw.wasm"
+
+![](images/ch02/ch02.png)
+1. 采用unittest进行单元测试
+2. 由于使用小端格式读取数值，python可采用byteorder的little入参
+```python
+int.from_bytes(self.data[:8], byteorder='little')
+```
+3. 如果该结构体是数组，由于Python无法表示结构数组，故类初始化的时候初始一个数组。
+
 ### 第3章-指令集
 ### 第4章-文本格式
 ### 第5章-操作数栈

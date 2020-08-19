@@ -10,6 +10,7 @@ import os
 from optparse import OptionParser
 
 import binary
+from cmd.dumper import dump
 
 
 def main(input_args):
@@ -20,9 +21,9 @@ def main(input_args):
                       help="print version and exit.")
     # 解析参数
     (options, args) = parser.parse_args(input_args)
-    module = binary.decode_file(args[0])
+    module, err = binary.decode_file(args[0])
 
-    if not options.dump_flag:
+    if options.dump_flag:
         dump(module)
 
 
@@ -33,6 +34,6 @@ if __name__ == '__main__':
 
     # 使用输入参数测试
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-    file_name = os.path.join(os.path.dirname(root_path), "js", "ch01_hw.wasm")
+    file_name = os.path.join(os.path.dirname(root_path), "../js", "ch01_hw.wasm")
     fake_args = ['-d', file_name]
     main(fake_args)
