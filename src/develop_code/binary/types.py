@@ -18,6 +18,12 @@ ValTypeF32 = 0x7D
 # 64位浮点数（简称f64）
 ValTypeF64 = 0x7C
 
+BlockTypeI32 = -1  # ()->(i32)
+BlockTypeI64 = -2  # ()->(i64)
+BlockTypeF32 = -3  # ()->(f32)
+BlockTypeF64 = -4  # ()->(f64)
+BlockTypeEmpty = -64  # ()->()
+
 FtTag = 0x60
 FuncRef = 0x70
 

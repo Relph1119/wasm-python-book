@@ -59,7 +59,7 @@ class Dumper:
                   (self.imported_table_count + i, t.limits))
 
     def dump_mem_sec(self):
-        print("Memory[%d]:", len(self.module.mem_sec))
+        print("Memory[%d]:" % len(self.module.mem_sec))
         for i, limits in enumerate(self.module.mem_sec):
             print("  memory[%d]: %s" %
                   (self.imported_mem_count + i, limits))

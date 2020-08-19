@@ -7,8 +7,9 @@
 @project: wasm-python-book
 @desc: wasm-objdump工具
 """
-from binary.module import Module, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, ExportTagFunc, \
+from binary.module import ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, ExportTagFunc, \
     ExportTagTable, ExportTagMem, ExportTagGlobal
+from binary.opcodes import *
 from binary.types import val_type_to_str
 
 
@@ -59,7 +60,7 @@ class Dumper:
                   (self.imported_table_count + i, t.limits))
 
     def dump_mem_sec(self):
-        print("Memory[%d]:", len(self.module.mem_sec))
+        print("Memory[%d]:" % len(self.module.mem_sec))
         for i, limits in enumerate(self.module.mem_sec):
             print("  memory[%d]: %s" %
                   (self.imported_mem_count + i, limits))
@@ -100,6 +101,7 @@ class Dumper:
             print(",".join(["%s x %d" % (val_type_to_str(locals.type), locals.n)
                             for locals in code.locals]), end='')
             print("]")
+            self.dump_expr("    ", code.expr)
 
     def dump_data_sec(self):
         print("Data[%d]:" % len(self.module.data_sec))
@@ -110,6 +112,26 @@ class Dumper:
         print("Custom[%d]:" % len(self.module.custom_secs))
         for i, cs in enumerate(self.module.custom_secs):
             print("  custom[%d]: name=%s" % (i, cs.name))
+
+    def dump_expr(self, indentation, expr):
+        for _, instr in enumerate(expr):
+            if instr.opcode in [Block, Loop]:
+                args = instr.args
+                bt = self.module.get_block_type(args.bt)
+                print("%s%s %s" % (indentation, instr.get_opname(), bt))
+                self.dump_expr(indentation + "  ", args.instrs)
+                print("%s%s" % (indentation, "end"))
+            elif instr.opcode == If:
+                args = instr.args
+                bt = self.module.get_block_type(args.bt)
+                print("%s%s %s" % (indentation, "if", bt))
+                self.dump_expr(indentation + "  ", args.instrs1)
+                print("%s%s" % (indentation, "else"))
+                self.dump_expr(indentation + "  ", args.instrs2)
+                print("%s%s" % (indentation, "end"))
+            else:
+                if instr.args is not None:
+                    print("{}{} {}".format(indentation, instr.get_opname(), instr.args))
 
 
 def dump(module):

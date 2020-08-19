@@ -9,6 +9,9 @@
 """
 
 # 小端方式编码数值，魔数：0asm
+from binary.types import BlockTypeI32, BlockTypeI64, BlockTypeF32, BlockTypeF64, BlockTypeEmpty, FuncType, ValTypeI32, \
+    ValTypeI64, ValTypeF32, ValTypeF64
+
 MagicNumber = 0x6D736100
 # 版本号：1
 Version = 0x00000001
@@ -109,6 +112,20 @@ class Module:
         # 数据段 11
         # data_sec: 0x0B|byte_count|vec<data>
         self.data_sec = []
+
+    def get_block_type(self, bt):
+        if bt == BlockTypeI32:
+            return FuncType(result_types=[ValTypeI32])
+        elif bt == BlockTypeI64:
+            return FuncType(result_types=[ValTypeI64])
+        elif bt == BlockTypeF32:
+            return FuncType(result_types=[ValTypeF32])
+        elif bt == BlockTypeF64:
+            return FuncType(result_types=[ValTypeF64])
+        elif bt == BlockTypeEmpty:
+            return FuncType()
+        else:
+            return self.type_sec[bt]
 
 
 class CustomSec:

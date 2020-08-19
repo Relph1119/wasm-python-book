@@ -11,13 +11,16 @@ import ctypes
 import struct
 
 from binary.errors import ErrUnexpectedEnd
+from binary.instruction import Instruction, BlockArgs, IfArgs, BrTableArgs, MemArg
 from binary.leb128 import decode_var_uint, decode_var_int
 from binary.module import Import, ImportDesc, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, \
     Global, Export, ExportDesc, ExportTagFunc, ExportTagTable, ExportTagMem, ExportTagGlobal, Elem, Code, Locals, \
     Data, MagicNumber, Version, Module, SecCustomID, SecDataID, CustomSec, SecTypeID, SecImportID, SecFuncID, \
     SecTableID, SecMemID, SecGlobalID, SecExportID, SecStartID, SecElemID, SecCodeID
+from binary.opcodes import *
+from binary.opnames import opnames
 from binary.types import ValTypeI32, ValTypeI64, ValTypeF32, ValTypeF64, FuncType, FtTag, TableType, FuncRef, \
-    GlobalType, MutConst, MutVar, Limits
+    GlobalType, MutConst, MutVar, Limits, BlockTypeI32, BlockTypeI64, BlockTypeF32, BlockTypeF64, BlockTypeEmpty
 
 
 def decode_file(file_name: str):
@@ -41,6 +44,7 @@ def decode(data):
         reader = WasmReader(data)
         reader.read_module(module)
     except Exception as e:
+        raise e
         err = e
     return module, err
 
@@ -293,14 +297,17 @@ class WasmReader:
 
     def read_code_sec(self):
         """读取代码段"""
-        vec = []
-        for _ in range(self.read_var_u32()):
-            vec.append(self.read_code())
+        vec = [Code()] * self.read_var_u32()
+        for i in range(len(vec)):
+            vec[i] = self.read_code(i)
         return vec
 
-    def read_code(self):
-        code_reader = WasmReader(self.read_bytes())
-        code = Code(locals_vec=code_reader.read_locals_vec())
+    def read_code(self, idx):
+        n = self.read_var_u32()
+        remaining_before_read = self.remaining()
+        code = Code(self.read_locals_vec(), self.read_expr())
+        if self.remaining() + int(n) != remaining_before_read:
+            print("invalid code[%d]" % idx)
         if code.get_local_count() >= (1 << 32 - 1):
             raise Exception("too many locals: %d" % code.get_local_count())
         return code
@@ -336,6 +343,14 @@ class WasmReader:
             raise Exception("malformed value type: %d" % vt)
         return vt
 
+    def read_block_type(self):
+        bt = self.read_var_s32()
+        if bt < 0:
+            if bt not in [BlockTypeI32, BlockTypeI64, BlockTypeF32, BlockTypeF64, BlockTypeEmpty]:
+                raise Exception("malformed block type: %d" % bt)
+
+        return bt
+
     def read_func_type(self):
         ft = FuncType(self.read_byte(), self.read_val_types(), self.read_val_types())
         if ft.tag != FtTag:
@@ -367,6 +382,107 @@ class WasmReader:
         return vec
 
     def read_expr(self):
-        while self.read_byte() != 0x0B:
-            pass
-        return None
+        instrs, end = self.read_instructions()
+        if end != End_:
+            raise Exception("invalid expr end: %d" % end)
+        return instrs
+
+    def read_instructions(self):
+        """
+        读取并收集指令，直到遇到else或者end指令为止
+        :return:
+        """
+        instrs = []
+        while (True):
+            instr = self.read_instruction()
+            if instr.opcode == Else_ or instr.opcode == End_:
+                end = instr.opcode
+                return instrs, end
+            instrs.append(instr)
+
+    def read_instruction(self):
+        """
+        先读取操作码，然后根据操作码读取立即数
+        :return:
+        """
+        instr = Instruction()
+        instr.opcode = self.read_byte()
+        if opnames[instr.opcode] == "":
+            raise Exception("undefined opcode: 0x%02x" % instr.opcode)
+
+        instr.args = self.read_args(instr.opcode)
+        return instr
+
+    def read_args(self, opcode):
+        if opcode in [Block, Loop]:
+            return self.read_block_args()
+        elif opcode == If:
+            return self.read_if_args()
+        elif opcode in [Br, BrIf]:
+            return self.read_var_u32()
+        elif opcode == BrTable:
+            return self.read_br_table_args()
+        elif opcode == Call:
+            return self.read_var_u32()
+        elif opcode == CallIndirect:
+            return self.read_call_indirect_args()
+        elif opcode in [LocalGet, LocalSet, LocalTee]:
+            return self.read_var_u32()
+        elif opcode in [GlobalGet, GlobalSet]:
+            return self.read_var_u32()
+        elif opcode in [MemorySize, MemoryGrow]:
+            return self.read_zero()
+        elif opcode == I32Const:
+            return self.read_var_s32()
+        elif opcode == I64Const:
+            return self.read_var_s64()
+        elif opcode == F32Const:
+            return self.read_f32()
+        elif opcode == F64Const:
+            return self.read_f64()
+        elif opcode == TruncSat:
+            return self.read_byte()
+        else:
+            if I32Load <= opcode <= I64Store32:
+                return self.read_mem_arg()
+            return None
+
+    def read_block_args(self):
+        """读取block参数"""
+        args = BlockArgs()
+        args.bt = self.read_block_type()
+        args.instrs, end = self.read_instructions()
+        if end != End_:
+            raise Exception("invalid block end: %d" % end)
+        return args
+
+    def read_if_args(self):
+        """读取if参数"""
+        args = IfArgs()
+        args.bt = self.read_block_type()
+        args.instrs1, end = self.read_instructions()
+        if end == Else_:
+            args.instrs2, end = self.read_instructions()
+            if end != End_:
+                raise Exception("invalid block end: %d" % end)
+        return args
+
+    def read_br_table_args(self):
+        """读取br_table参数"""
+        return BrTableArgs(self.read_indices(), self.read_var_u32())
+
+    def read_call_indirect_args(self):
+        """读取call indirect参数"""
+        type_idx = self.read_var_u32()
+        self.read_zero()
+        return type_idx
+
+    def read_mem_arg(self):
+        """读取内存的参数"""
+        return MemArg(self.read_var_u32(), self.read_var_u32())
+
+    def read_zero(self):
+        b = self.read_byte()
+        if b != 0:
+            raise Exception("zero flag expected, got %d" % b)
+        return 0

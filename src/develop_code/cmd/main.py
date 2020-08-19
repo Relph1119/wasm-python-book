@@ -34,6 +34,6 @@ if __name__ == '__main__':
 
     # 使用输入参数测试
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-    file_name = os.path.join(os.path.dirname(root_path), "../js", "ch01_hw.wasm")
+    file_name = os.path.join(os.path.dirname(root_path), "../wat", "ch03_eg4_block.wasm")
     fake_args = ['-d', file_name]
     main(fake_args)
