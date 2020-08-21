@@ -6,7 +6,6 @@
 ## 运行环境
 Python 版本：3.7.2  
 PyCharm 版本：PyCharm 2018.3.7 (Professional Edition)  
-Java版本：1.8
 
 ## 代码结构
 <pre>
