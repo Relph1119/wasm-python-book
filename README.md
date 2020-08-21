@@ -94,42 +94,42 @@ wat2wasm xxx.wat
 </details>
 
 <details>
-<summary>第6章-内存</summary>
+<summary>第6章-内存-未完成</summary>
 
 </details>
 
 <details>
-<summary>第7章-函数调用（上）</summary>
+<summary>第7章-函数调用（上）-未完成</summary>
 
 </details>
 
 <details>
-<summary>第8章-控制指令</summary>
+<summary>第8章-控制指令-未完成</summary>
 
 </details>
 
 <details>
-<summary>第9章-函数调用（下）</summary>
+<summary>第9章-函数调用（下）-未完成</summary>
 
 </details>
 
 <details>
-<summary>第10章-链接和实例化</summary>
+<summary>第10章-链接和实例化-未完成</summary>
 
 </details>
 
 <details>
-<summary>第11章-错误处理和验证</summary>
+<summary>第11章-错误处理和验证-未完成</summary>
 
 </details>
 
 <details>
-<summary>第12章-编译为Wasm</summary>
+<summary>第12章-编译为Wasm-未完成</summary>
 
 </details>
 
 <details>
-<summary>第13章-AOT编译器</summary>
+<summary>第13章-AOT编译器-未完成</summary>
 
 </details>
 
