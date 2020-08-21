@@ -43,11 +43,14 @@ wat2wasm xxx.wat
 
 <details>
 <summary>第2章-二进制格式</summary>
+
 完成了模块解码器和dump程序。
 传入参数：
-> -d "wasm-python-book\js\ch01_hw.wasm"
-
+```
+-d "wasm-python-book\js\ch01_hw.wasm"
+```
 ![](images/ch02/ch02.png)
+
 1. 采用unittest进行单元测试
 2. 由于使用小端格式读取数值，python可采用byteorder的little入参
     ```python
@@ -56,12 +59,15 @@ wat2wasm xxx.wat
 3. 如果该结构体是数组，由于Python无法表示结构数组，故类初始化的时候初始一个数组。
 </details>
 
-### 第3章-指令集
+<details>
+<summary>第3章-指令集</summary>
+
 完成了指令的解码。
-
 ![](images/ch03/ch03.png)
+</details>
 
-### 第5章-操作数栈
+<details>
+<summary>第5章-操作数栈</summary>
 实现了操作栈和虚拟机框架，然后实现了参数和数值指令。
 
 ![](images/ch05/ch05_param.png)
@@ -85,14 +91,46 @@ wat2wasm xxx.wat
         val = struct.unpack('>f', struct.pack('>l', val))[0]
         return float32(val)
     ```
+</details>
 
-### 第6章-内存
-### 第7章-函数调用（上）
-### 第8章-控制指令
-### 第9章-函数调用（下）
-### 第10章-链接和实例化
-### 第11章-错误处理和验证
-### 第12章-编译为Wasm
-### 第13章-AOT编译器
+<details>
+<summary>第6章-内存</summary>
+
+</details>
+
+<details>
+<summary>第7章-函数调用（上）</summary>
+
+</details>
+
+<details>
+<summary>第8章-控制指令</summary>
+
+</details>
+
+<details>
+<summary>第9章-函数调用（下）</summary>
+
+</details>
+
+<details>
+<summary>第10章-链接和实例化</summary>
+
+</details>
+
+<details>
+<summary>第11章-错误处理和验证</summary>
+
+</details>
+
+<details>
+<summary>第12章-编译为Wasm</summary>
+
+</details>
+
+<details>
+<summary>第13章-AOT编译器</summary>
+
+</details>
 
 ## 总结
