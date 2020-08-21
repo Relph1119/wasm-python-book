@@ -10,16 +10,16 @@
 import ctypes
 import struct
 
-from ch03.binary.errors import ErrUnexpectedEnd
-from ch03.binary.instruction import Instruction, BlockArgs, IfArgs, BrTableArgs, MemArg
-from ch03.binary.leb128 import decode_var_uint, decode_var_int
-from ch03.binary.module import Import, ImportDesc, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, \
+from ch05.binary.errors import ErrUnexpectedEnd
+from ch05.binary.instruction import Instruction, BlockArgs, IfArgs, BrTableArgs, MemArg
+from ch05.binary.leb128 import decode_var_uint, decode_var_int
+from ch05.binary.module import Import, ImportDesc, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, \
     Global, Export, ExportDesc, ExportTagFunc, ExportTagTable, ExportTagMem, ExportTagGlobal, Elem, Code, Locals, \
     Data, MagicNumber, Version, Module, SecCustomID, SecDataID, CustomSec, SecTypeID, SecImportID, SecFuncID, \
     SecTableID, SecMemID, SecGlobalID, SecExportID, SecStartID, SecElemID, SecCodeID
-from ch03.binary.opcodes import *
-from ch03.binary.opnames import opnames
-from ch03.binary.types import ValTypeI32, ValTypeI64, ValTypeF32, ValTypeF64, FuncType, FtTag, TableType, FuncRef, \
+from ch05.binary.opcodes import *
+from ch05.binary.opnames import opnames
+from ch05.binary.types import ValTypeI32, ValTypeI64, ValTypeF32, ValTypeF64, FuncType, FtTag, TableType, FuncRef, \
     GlobalType, MutConst, MutVar, Limits, BlockTypeI32, BlockTypeI64, BlockTypeF32, BlockTypeF64, BlockTypeEmpty
 
 

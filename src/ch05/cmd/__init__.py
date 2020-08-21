@@ -3,10 +3,7 @@
 """
 @author: HuRuiFeng
 @file: __init__.py
-@time: 2020/8/19 1:55
+@time: 2020/8/19 12:01
 @project: wasm-python-book
 @desc:
 """
-from ch03.binary import reader
-
-decode_file = reader.decode_file

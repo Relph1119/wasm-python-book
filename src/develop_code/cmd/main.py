@@ -11,6 +11,7 @@ from optparse import OptionParser
 
 import binary
 from cmd.dumper import dump
+from interpreter.vm import exec_main_func
 
 
 def main(input_args):
@@ -23,8 +24,13 @@ def main(input_args):
     (options, args) = parser.parse_args(input_args)
     module, err = binary.decode_file(args[0])
 
+    if err is not None:
+        raise err
+
     if options.dump_flag:
         dump(module)
+    else:
+        exec_main_func(module)
 
 
 if __name__ == '__main__':
@@ -34,6 +40,7 @@ if __name__ == '__main__':
 
     # 使用输入参数测试
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-    file_name = os.path.join(os.path.dirname(root_path), "../wat", "ch03_eg4_block.wasm")
-    fake_args = ['-d', file_name]
+    file_name = os.path.join(os.path.dirname(root_path), "../wat", "ch05_param.wasm")
+    # file_name = os.path.join(os.path.dirname(root_path), "../wat", "ch05_num.wasm")
+    fake_args = [file_name]
     main(fake_args)

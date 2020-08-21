@@ -44,7 +44,6 @@ def decode(data):
         reader = WasmReader(data)
         reader.read_module(module)
     except Exception as e:
-        raise e
         err = e
     return module, err
 

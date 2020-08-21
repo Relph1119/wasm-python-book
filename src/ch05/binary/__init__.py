@@ -7,6 +7,6 @@
 @project: wasm-python-book
 @desc:
 """
-from ch03.binary import reader
+from ch05.binary import reader
 
 decode_file = reader.decode_file
