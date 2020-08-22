@@ -94,8 +94,10 @@ wat2wasm xxx.wat
 </details>
 
 <details>
-<summary>第6章-内存-未完成</summary>
+<summary>第6章-内存</summary>
+实现了Wasm内存和相关指令，Wasm内存是一块抽象的RAM（本质上就是个线性的字节数组），并且可以在限制范围内按页动态增长。Wasm提供了丰富的内存指令，用于读写各种基本类型的数值，这些数值在Wasm内存中按小端方式存储。简而言之，Wasm内存和真实内存非常接近，只具备最基本的读写能力，像内存管理、垃圾回收这些高级功能都要靠高级语言自己去解决。也正是因为贴近底层，Wasm程序才能够以接近本地程序的速度被执行。
 
+![](images/ch06/ch06.png)
 </details>
 
 <details>

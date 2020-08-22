@@ -7,7 +7,7 @@
 @project: wasm-python-book
 @desc:
 """
-from binary.opnames import opnames
+from ch06.binary.opnames import opnames
 
 
 class Expr(list):

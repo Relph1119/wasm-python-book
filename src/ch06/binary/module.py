@@ -9,7 +9,7 @@
 """
 
 # 小端方式编码数值，魔数：0asm
-from binary.types import BlockTypeI32, BlockTypeI64, BlockTypeF32, BlockTypeF64, BlockTypeEmpty, FuncType, ValTypeI32, \
+from ch06.binary.types import BlockTypeI32, BlockTypeI64, BlockTypeF32, BlockTypeF64, BlockTypeEmpty, FuncType, ValTypeI32, \
     ValTypeI64, ValTypeF32, ValTypeF64
 
 MagicNumber = 0x6D736100

@@ -7,10 +7,10 @@
 @project: wasm-python-book
 @desc:
 """
-from binary.module import Module
-from interpreter.instructions import instr_table
-from interpreter.vm_memory import Memory
-from interpreter.vm_stack_operand import OperandStack
+from ch06.binary.module import Module
+from ch06.interpreter.instructions import instr_table
+from ch06.interpreter.vm_memory import Memory
+from ch06.interpreter.vm_stack_operand import OperandStack
 
 
 class VM(OperandStack):
