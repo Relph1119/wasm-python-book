@@ -9,8 +9,9 @@
 """
 import unittest
 
-from binary.types import MemType
+from binary.types import MemType, GlobalType, ValTypeI32
 from interpreter import float32, int64, uint64, int32, uint32
+from interpreter.vm_global import GlobalVar
 from interpreter.vm_memory import Memory
 from interpreter.vm_stack_operand import OperandStack
 
@@ -37,6 +38,16 @@ class TestVMFunc(unittest.TestCase):
         self.assertEqual(True, stack.pop_bool())
         self.assertEqual(0, len(stack.slots))
 
+    def test_local_var(self):
+        stack = OperandStack()
+        stack.push_u32(1)
+        stack.push_u32(3)
+        stack.push_u32(5)
+
+        self.assertEqual(uint64(3), stack.get_operand(1))
+        stack.set_operand(1, 7)
+        self.assertEqual(uint64(7), stack.get_operand(1))
+
     def test_mem(self):
         mem = Memory(mem_type=MemType(min=1))
 
@@ -48,3 +59,9 @@ class TestVMFunc(unittest.TestCase):
         self.assertEqual(1, mem.size)
         self.assertEqual(1, mem.grow(3))
         self.assertEqual(4, mem.size)
+
+    def test_global_var(self):
+        g = GlobalVar(gt=GlobalType(ValTypeI32, 1), val=0)
+
+        g.set_as_u64(100)
+        self.assertEqual(uint64(100), g.get_as_u64())

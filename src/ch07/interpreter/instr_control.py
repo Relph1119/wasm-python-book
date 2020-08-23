@@ -7,8 +7,8 @@
 @project: wasm-python-book
 @desc:
 """
-from binary.opcodes import Call
-from interpreter import uint32
+from ch07.binary.opcodes import Call
+from ch07.interpreter import uint32
 
 
 def call(vm, args):
