@@ -7,13 +7,14 @@
 @project: wasm-python-book
 @desc:
 """
-from ch07.binary.module import Module, Global
+from ch07.binary.module import Module
 from ch07.binary.opcodes import Call
 from ch07.interpreter.instr_control import call
 from ch07.interpreter.instructions import instr_table
 from ch07.interpreter.vm_memory import Memory
 from ch07.interpreter.vm_stack_control import ControlStack, ControlFrame
 from ch07.interpreter.vm_stack_operand import OperandStack
+from ch07.interpreter.vm_global import GlobalVar
 
 
 class VM(OperandStack, ControlStack):
@@ -41,7 +42,7 @@ class VM(OperandStack, ControlStack):
 
         for data in self.module.data_sec:
             for instr in data.offset:
-                self.exe_instr(instr)
+                self.exec_instr(instr)
 
             # 指令执行完毕后，留在操作数栈顶的就是内存起始地址
             self.memory.write(self.pop_u64(), data.init)
@@ -49,8 +50,8 @@ class VM(OperandStack, ControlStack):
     def init_globals(self):
         for global_var in self.module.global_sec:
             for instr in global_var.init:
-                self.exe_instr(instr)
-            self.globals.append(Global(global_var.type, self.pop_u64()))
+                self.exec_instr(instr)
+            self.globals.append(GlobalVar(global_var.type, self.pop_u64()))
 
     def enter_block(self, opcode, bt, instrs):
         """
@@ -78,9 +79,9 @@ class VM(OperandStack, ControlStack):
         """一条一条执行函数指令"""
         code = self.module.code_sec[idx]
         for _, instr in enumerate(code.expr):
-            self.exe_instr(instr)
+            self.exec_instr(instr)
 
-    def exe_instr(self, instr):
+    def exec_instr(self, instr):
         """指令分派逻辑：采用查表法"""
         instr_table[instr.opcode](self, instr.args)
 
@@ -93,7 +94,7 @@ class VM(OperandStack, ControlStack):
             else:
                 instr = cf.instrs[cf.pc]
                 cf.pc += 1
-                self.exe_instr(instr)
+                self.exec_instr(instr)
 
 
 def exec_main_func(module):

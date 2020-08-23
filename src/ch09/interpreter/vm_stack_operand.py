@@ -9,7 +9,7 @@
 """
 import struct
 
-from interpreter import uint64, int64, uint32, int32, float32, float64
+from ch09.interpreter import uint64, int64, uint32, int32, float32, float64
 
 
 class OperandStack:
@@ -35,8 +35,8 @@ class OperandStack:
         self.slots.extend(vals)
 
     def pop_u64s(self, n):
-        vals = self.slots[len(self.slots) - n:]
-        self.slots = self.slots[:len(self.slots) - n]
+        vals = self.slots[len(self.slots) -n:]
+        self.slots = self.slots[:len(self.slots)-n]
         return vals
 
     def push_u64(self, val):

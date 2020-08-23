@@ -9,9 +9,9 @@
 import os
 from optparse import OptionParser
 
-import binary
-from cmd.dumper import dump
-from interpreter.vm import exec_main_func
+from ch09 import binary
+from ch09.cmd.dumper import dump
+from ch09.interpreter.vm import exec_main_func
 
 
 def main(input_args):
@@ -45,8 +45,10 @@ if __name__ == '__main__':
 
     # 测试Hello, World!
     # file_name = os.path.join(os.path.dirname(root_path), "../js", "ch01_hw.wasm")
+    # fake_args = [file_name]
 
-    #
+    # 测试ch09_calc
     file_name = os.path.join(os.path.dirname(root_path), "../wat", "ch09_calc.wasm")
     fake_args = ["--verbose", file_name]
+
     main(fake_args)

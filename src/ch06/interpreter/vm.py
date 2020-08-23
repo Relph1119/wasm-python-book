@@ -32,7 +32,7 @@ class VM(OperandStack):
 
         for data in self.module.data_sec:
             for instr in data.offset:
-                self.exe_instr(instr)
+                self.exec_instr(instr)
 
             # 指令执行完毕后，留在操作数栈顶的就是内存起始地址
             self.memory.write(self.pop_u64(), data.init)
@@ -41,9 +41,9 @@ class VM(OperandStack):
         """一条一条执行函数指令"""
         code = self.module.code_sec[idx]
         for _, instr in enumerate(code.expr):
-            self.exe_instr(instr)
+            self.exec_instr(instr)
 
-    def exe_instr(self, instr):
+    def exec_instr(self, instr):
         """指令分派逻辑：采用查表法"""
         instr_table[instr.opcode](self, instr.args)
 

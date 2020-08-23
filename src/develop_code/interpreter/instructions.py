@@ -31,12 +31,14 @@ instr_table[opcodes.Br] = br
 instr_table[opcodes.BrIf] = br_if
 instr_table[opcodes.BrTable] = br_table
 instr_table[opcodes.Return] = control_return
-instr_table[opcodes.Call] = call  # hack!
+instr_table[opcodes.Call] = call
+instr_table[opcodes.CallIndirect] = call_indirect
 
-# instr_parametric.py
+# instr_parametric
 instr_table[opcodes.Drop] = drop
 instr_table[opcodes.Select] = _select
 
+# instr_variable
 instr_table[opcodes.LocalGet] = local_get
 instr_table[opcodes.LocalSet] = local_set
 instr_table[opcodes.LocalTee] = local_tee

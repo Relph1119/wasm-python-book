@@ -8,11 +8,10 @@
 @desc: Wasm模块定义
 """
 
-from ch08.binary.types import BlockTypeI32, BlockTypeI64, BlockTypeF32, BlockTypeF64, BlockTypeEmpty, FuncType, \
-    ValTypeI32, \
+# 小端方式编码数值，魔数：0asm
+from ch09.binary.types import BlockTypeI32, BlockTypeI64, BlockTypeF32, BlockTypeF64, BlockTypeEmpty, FuncType, ValTypeI32, \
     ValTypeI64, ValTypeF32, ValTypeF64
 
-# 小端方式编码数值，魔数：0asm
 MagicNumber = 0x6D736100
 # 版本号：1
 Version = 0x00000001

@@ -7,12 +7,12 @@
 @project: wasm-python-book
 @desc: 指令表
 """
-from ch08.binary import opcodes
-from ch08.interpreter.instr_control import *
-from ch08.interpreter.instr_memory import *
-from ch08.interpreter.instr_numeric import *
-from ch08.interpreter.instr_parametric import drop, _select
-from ch08.interpreter.instr_variable import *
+from ch09.binary import opcodes
+from ch09.interpreter.instr_control import *
+from ch09.interpreter.instr_memory import *
+from ch09.interpreter.instr_numeric import *
+from ch09.interpreter.instr_parametric import drop, _select
+from ch09.interpreter.instr_variable import *
 
 
 def instr_fn(vm, args):
@@ -31,9 +31,10 @@ instr_table[opcodes.Br] = br
 instr_table[opcodes.BrIf] = br_if
 instr_table[opcodes.BrTable] = br_table
 instr_table[opcodes.Return] = control_return
-instr_table[opcodes.Call] = call  # hack!
+instr_table[opcodes.Call] = call
+instr_table[opcodes.CallIndirect] = call_indirect
 
-# instr_parametric.py
+# instr_parametric
 instr_table[opcodes.Drop] = drop
 instr_table[opcodes.Select] = _select
 

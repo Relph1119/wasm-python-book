@@ -7,14 +7,17 @@
 @project: wasm-python-book
 @desc:
 """
-from ch08.binary.module import Module
-from ch08.binary.opcodes import Call
-from ch08.interpreter.instr_control import call
-from ch08.interpreter.instructions import instr_table
-from ch08.interpreter.vm_global import GlobalVar
-from ch08.interpreter.vm_memory import Memory
-from ch08.interpreter.vm_stack_control import ControlStack, ControlFrame
-from ch08.interpreter.vm_stack_operand import OperandStack
+from ch09.binary.module import Module, ImportTagFunc
+from ch09.binary.opcodes import Call
+from ch09.interpreter.instr_control import call
+from ch09.interpreter.instructions import instr_table
+from ch09.interpreter.native import *
+from ch09.interpreter.vm_func import new_internal_func, new_external_func
+from ch09.interpreter.vm_global import GlobalVar
+from ch09.interpreter.vm_memory import Memory
+from ch09.interpreter.vm_stack_control import ControlStack, ControlFrame
+from ch09.interpreter.vm_stack_operand import OperandStack
+from ch09.interpreter.vm_table import Table
 
 
 class VM(OperandStack, ControlStack):
@@ -26,6 +29,9 @@ class VM(OperandStack, ControlStack):
         self.memory = memory
         # 用于存放模块实例的全局变量
         self.globals = []
+        # 用于记录内/外部函数
+        self.funcs = []
+        self.table = None
         # 用来记录当前函数的第一个局部变量
         self.local_0_idx = None
         self.frames = []
@@ -52,6 +58,46 @@ class VM(OperandStack, ControlStack):
             for instr in global_var.init:
                 self.exec_instr(instr)
             self.globals.append(GlobalVar(global_var.type, self.pop_u64()))
+
+    def init_funcs(self):
+        self.link_native_funcs()
+        for i, ft_idx in enumerate(self.module.func_sec):
+            ft = self.module.type_sec[ft_idx]
+            code = self.module.code_sec[i]
+            self.funcs.append(new_internal_func(ft, code))
+
+    def link_native_funcs(self):
+        """外部函数的初始化"""
+        for imp in self.module.import_sec:
+            if imp.desc.tag == ImportTagFunc and imp.module == "env":
+                ft = self.module.type_sec[imp.desc.func_type]
+                name = imp.name
+                if name == "print_char":
+                    self.funcs.append(new_external_func(ft, print_char))
+                elif name == "assert_true":
+                    self.funcs.append(new_external_func(ft, assert_true))
+                elif name == "assert_false":
+                    self.funcs.append(new_external_func(ft, assert_false))
+                elif name == "assert_eq_i32":
+                    self.funcs.append(new_external_func(ft, assert_eq_i32))
+                elif name == "assert_eq_i64":
+                    self.funcs.append(new_external_func(ft, assert_eq_i64))
+                elif name == "assert_eq_f32":
+                    self.funcs.append(new_external_func(ft, assert_eq_f32))
+                elif name == "assert_eq_f64":
+                    self.funcs.append(new_external_func(ft, assert_eq_f64))
+                else:
+                    raise Exception("TODO")
+
+    def init_table(self):
+        if len(self.module.table_sec) > 0:
+            self.table = Table(self.module.table_sec[0])
+        for elem in self.module.elem_sec:
+            for instr in elem.offset:
+                self.exec_instr(instr)
+            offset = self.pop_u32()
+            for i, func_idx in enumerate(elem.init):
+                self.table.set_elem(offset + i, self.funcs[func_idx])
 
     def enter_block(self, opcode, bt, instrs):
         """
@@ -106,9 +152,21 @@ class VM(OperandStack, ControlStack):
                 self.exec_instr(instr)
 
 
+def get_main_func_idx(module):
+    for exp in module.export_sec:
+        if exp.desc.tag == ImportTagFunc and exp.name == "main":
+            return exp.desc.idx
+    raise Exception("main func not found")
+
+
 def exec_main_func(module, verbose_flag=False):
     vm = VM(module)
     vm.init_mem()
     vm.init_globals()
-    call(vm, module.start_sec)
+    vm.init_funcs()
+    vm.init_table()
+    if module.start_sec is not None:
+        call(vm, module.start_sec)
+    else:
+        call(vm, get_main_func_idx(module))
     vm.loop(verbose_flag)

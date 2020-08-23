@@ -7,10 +7,10 @@
 @project: wasm-python-book
 @desc:
 """
-from binary.opcodes import Call, Block, Loop, If
-from interpreter import uint32
-from interpreter.errors import ErrTrap, ErrUndefinedElem, ErrTypeMismatch
-from interpreter.val import warp_u64, unwrap_u64
+from ch09.binary.opcodes import Call, Block, Loop, If
+from ch09.interpreter import uint32
+from ch09.interpreter.errors import ErrTrap, ErrUndefinedElem, ErrTypeMismatch
+from ch09.interpreter.val import warp_u64, unwrap_u64
 
 
 def unreachable(vm, _):

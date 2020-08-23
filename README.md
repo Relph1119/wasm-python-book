@@ -110,7 +110,7 @@ wat2wasm xxx.wat
 </details>
 
 <details>
-<summary>第8章-控制指令-未完成</summary>
+<summary>第8章-控制指令</summary>
 
 传统的goto/jump指令被Wasm摒弃，取而代之的是结构化控制指令（block、loop、if）和受限的分支指令（br等）。
 
@@ -122,27 +122,33 @@ wat2wasm xxx.wat
 </details>
 
 <details>
-<summary>第9章-函数调用（下）-未完成</summary>
+<summary>第9章-函数调用（下）</summary>
+
+设计了本地函数调用接口，并且实现了本地函数调用，然后实现了表和间接函数调用指令。
+1. 执行HelloWorld程序，得到打印结果为"Hello, World!"
+![](images/ch09/ch09_测试HelloWorld程序.png)
+
+2. 执行ch09_calc程序，得到加法、减法和乘法的验证结果
+![](images/ch09/ch09_测试calc程序.png)
+</details>
+
+<details>
+<summary>第10章-链接和实例化</summary>
 
 </details>
 
 <details>
-<summary>第10章-链接和实例化-未完成</summary>
+<summary>第11章-错误处理和验证</summary>
 
 </details>
 
 <details>
-<summary>第11章-错误处理和验证-未完成</summary>
+<summary>第12章-编译为Wasm</summary>
 
 </details>
 
 <details>
-<summary>第12章-编译为Wasm-未完成</summary>
-
-</details>
-
-<details>
-<summary>第13章-AOT编译器-未完成</summary>
+<summary>第13章-AOT编译器</summary>
 
 </details>
 
