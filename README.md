@@ -112,6 +112,13 @@ wat2wasm xxx.wat
 <details>
 <summary>第8章-控制指令-未完成</summary>
 
+传统的goto/jump指令被Wasm摒弃，取而代之的是结构化控制指令（block、loop、if）和受限的分支指令（br等）。
+
+![](images/ch08/ch08.png)
+新增"--verbose"命令，调用如下：
+```shell
+--verbose "wasm-python-book\wat\ch08_fac.wasm"
+```
 </details>
 
 <details>

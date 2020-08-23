@@ -7,9 +7,9 @@
 @project: wasm-python-book
 @desc:
 """
-from binary.opcodes import Call, Block, Loop, If
-from interpreter import uint32
-from interpreter.errors import ErrTrap
+from ch08.binary.opcodes import Call, Block, Loop, If
+from ch08.interpreter import uint32
+from ch08.interpreter.errors import ErrTrap
 
 
 def unreachable(vm, _):

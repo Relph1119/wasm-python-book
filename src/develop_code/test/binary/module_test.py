@@ -9,6 +9,7 @@
 """
 
 import unittest
+
 import binary
 from binary.module import MagicNumber, Version
 

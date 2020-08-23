@@ -9,7 +9,7 @@
 """
 import struct
 
-from interpreter import uint64, int64, uint32, int32, float32, float64
+from ch08.interpreter import uint64, int64, uint32, int32, float32, float64
 
 
 class OperandStack:

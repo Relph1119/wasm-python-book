@@ -12,8 +12,8 @@ import unittest
 
 from binary.opcodes import *
 from binary.types import GlobalType
-from interpreter.instructions import instr_table
 from interpreter import *
+from interpreter.instructions import instr_table
 from interpreter.vm import VM
 from interpreter.vm_global import GlobalVar
 

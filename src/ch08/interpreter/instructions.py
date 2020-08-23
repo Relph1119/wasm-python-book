@@ -7,12 +7,12 @@
 @project: wasm-python-book
 @desc: 指令表
 """
-from binary import opcodes
-from interpreter.instr_control import *
-from interpreter.instr_memory import *
-from interpreter.instr_numeric import *
-from interpreter.instr_parametric import drop, _select
-from interpreter.instr_variable import *
+from ch08.binary import opcodes
+from ch08.interpreter.instr_control import *
+from ch08.interpreter.instr_memory import *
+from ch08.interpreter.instr_numeric import *
+from ch08.interpreter.instr_parametric import drop, _select
+from ch08.interpreter.instr_variable import *
 
 
 def instr_fn(vm, args):

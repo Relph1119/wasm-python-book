@@ -9,9 +9,9 @@
 import os
 from optparse import OptionParser
 
-import binary
-from cmd.dumper import dump
-from interpreter.vm import exec_main_func
+from ch08 import binary
+from ch08.cmd.dumper import dump
+from ch08.interpreter.vm import exec_main_func
 
 
 def main(input_args):

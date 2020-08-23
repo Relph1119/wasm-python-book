@@ -7,13 +7,13 @@
 @project: wasm-python-book
 @desc:
 """
-from binary.module import Module, Global
-from binary.opcodes import Call
-from interpreter.instr_control import call
-from interpreter.instructions import instr_table
-from interpreter.vm_memory import Memory
-from interpreter.vm_stack_control import ControlStack, ControlFrame
-from interpreter.vm_stack_operand import OperandStack
+from ch08.binary.module import Module, Global
+from ch08.binary.opcodes import Call
+from ch08.interpreter.instr_control import call
+from ch08.interpreter.instructions import instr_table
+from ch08.interpreter.vm_memory import Memory
+from ch08.interpreter.vm_stack_control import ControlStack, ControlFrame
+from ch08.interpreter.vm_stack_operand import OperandStack
 
 
 class VM(OperandStack, ControlStack):

@@ -12,8 +12,8 @@
 import math
 from decimal import Decimal
 
-from interpreter import int32, int64, float32, float64, uint32, uint64, int8, int16
-from interpreter.errors import ErrIntOverflow, ErrConvertToInt
+from ch08.interpreter import int32, int64, float32, float64, uint32, uint64, int8, int16
+from ch08.interpreter.errors import ErrIntOverflow, ErrConvertToInt
 
 __MaxInt32 = 1 << 31 - 1
 __MinInt32 = -1 << 31
