@@ -9,9 +9,9 @@
 import os
 from optparse import OptionParser
 
-import binary
-from cmd.dumper import dump
-from cmd.native import new_env
+from ch10 import binary
+from ch10.cmd.dumper import dump
+from ch10.cmd.native import new_env
 
 
 def main(input_args):
@@ -36,7 +36,7 @@ def main(input_args):
 
 
 def instantiate_and_exec_main_func(module):
-    from interpreter.vm import new
+    from ch10.interpreter.vm import new
 
     mm = dict({"env": new_env()})
     m, err = new(module, mm)

@@ -7,10 +7,10 @@
 @project: wasm-python-book
 @desc:
 """
-from ch09.binary.opcodes import Call, Block, Loop, If
-from ch09.interpreter import uint32
-from ch09.interpreter.errors import ErrTrap, ErrUndefinedElem, ErrTypeMismatch
-from ch09.interpreter.val import wrap_u64, unwrap_u64
+from ch10.binary.opcodes import Call, Block, Loop, If
+from ch10.interpreter import uint32
+from ch10.interpreter.errors import ErrTrap, ErrUndefinedElem, ErrTypeMismatch
+from ch10.interpreter.val import wrap_u64, unwrap_u64
 
 
 def unreachable(vm, _):
@@ -82,7 +82,7 @@ def call(vm, args):
 
 
 def call_func(vm, f):
-    if f.py_func is not None:
+    if f.func is not None:
         call_external_func(vm, f)
     else:
         call_internal_func(vm, f)
@@ -92,7 +92,9 @@ def call_external_func(vm, f):
     # 先根据函数签名把参数从栈顶弹出
     args = pop_args(vm, f.type)
     # 调用本地函数，最后把返回值压栈
-    results = f.py_func(args)
+    results, err = f.func.call(args)
+    if err is not None:
+        raise err
     if results is None:
         results = []
     push_results(vm, f.type, results)

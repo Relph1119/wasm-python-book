@@ -7,9 +7,9 @@
 @project: wasm-python-book
 @desc:
 """
-from instance import module
-from interpreter.errors import ErrImmutableGlobal
-from interpreter.val import wrap_u64, unwrap_u64
+from ch10.instance import module
+from ch10.interpreter.errors import ErrImmutableGlobal
+from ch10.interpreter.val import wrap_u64, unwrap_u64
 
 
 class GlobalVar(module.Global):

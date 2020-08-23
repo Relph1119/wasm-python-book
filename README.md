@@ -135,15 +135,12 @@ wat2wasm xxx.wat
 <details>
 <summary>第10章-链接和实例化</summary>
 
+块从二进制格式到函数执行分为3个语义阶段：解码、验证、执行（实例化、函数调用）。模块可以导出或导入4种成员：函数、表、内存、全局变量，多个模块实例链接在一起，共享这4种成员，本章实现模块的链接和实例化。
+![](images/ch10/ch10.png)
 </details>
 
 <details>
 <summary>第11章-错误处理和验证</summary>
-
-</details>
-
-<details>
-<summary>第12章-编译为Wasm</summary>
 
 </details>
 

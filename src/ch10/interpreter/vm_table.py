@@ -8,8 +8,8 @@
 @desc:
 """
 
-from instance import module
-from interpreter.errors import ErrUndefinedElem, ErrUninitializedElem
+from ch10.instance import module
+from ch10.interpreter.errors import ErrUndefinedElem, ErrUninitializedElem
 
 
 class Table(module.Table):

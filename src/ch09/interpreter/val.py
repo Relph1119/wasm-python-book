@@ -11,7 +11,7 @@ from ch09.binary.types import ValTypeI32, ValTypeI64, ValTypeF32, ValTypeF64
 from ch09.interpreter import int32, int64, float32, float64, uint64
 
 
-def warp_u64(vt, val):
+def wrap_u64(vt, val):
     if vt == ValTypeI32:
         return int32(val)
     elif vt == ValTypeI64:

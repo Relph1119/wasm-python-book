@@ -7,17 +7,17 @@
 @project: wasm-python-book
 @desc:
 """
-from binary.module import Module, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, ExportTagFunc, \
+from ch10.binary.module import Module, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, ExportTagFunc, \
     ExportTagTable, ExportTagMem, ExportTagGlobal
-from binary.opcodes import Call
-from instance import module
-from interpreter.instructions import instr_table
-from interpreter.vm_func import new_internal_func, new_external_func
-from interpreter.vm_global import GlobalVar
-from interpreter.vm_memory import Memory
-from interpreter.vm_stack_control import ControlStack, ControlFrame
-from interpreter.vm_stack_operand import OperandStack
-from interpreter.vm_table import Table
+from ch10.binary.opcodes import Call
+from ch10.instance import module
+from ch10.interpreter.instructions import instr_table
+from ch10.interpreter.vm_func import new_internal_func, new_external_func
+from ch10.interpreter.vm_global import GlobalVar
+from ch10.interpreter.vm_memory import Memory
+from ch10.interpreter.vm_stack_control import ControlStack, ControlFrame
+from ch10.interpreter.vm_stack_operand import OperandStack
+from ch10.interpreter.vm_table import Table
 
 
 class VM(OperandStack, ControlStack, module.Module):

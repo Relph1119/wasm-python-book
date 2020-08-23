@@ -8,9 +8,9 @@
 @desc: 函数方法
 """
 
-from instance.module import Function
-from interpreter.instr_control import call_func
-from interpreter.val import unwrap_u64, wrap_u64
+from ch10.instance.module import Function
+from ch10.interpreter.instr_control import call_func
+from ch10.interpreter.val import unwrap_u64, wrap_u64
 
 
 class VMFunc(Function):
