@@ -7,9 +7,9 @@
 @project: wasm-python-book
 @desc: 本地模型实例
 """
-from instance import module
-from instance.native_function import NativeFunction
-from instance.sig_parser import parse_name_and_sig
+from ch11.instance import module
+from ch11.instance.native_function import NativeFunction
+from ch11.instance.sig_parser import parse_name_and_sig
 
 
 class NativeModule(module.Module):

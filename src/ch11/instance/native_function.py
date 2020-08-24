@@ -7,8 +7,8 @@
 @project: wasm-python-book
 @desc: 本地方法实例
 """
-from binary.types import FuncType
-from instance.module import Function
+from ch11.binary.types import FuncType
+from ch11.instance.module import Function
 
 
 class NativeFunction(Function):

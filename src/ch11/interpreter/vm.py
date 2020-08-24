@@ -7,18 +7,18 @@
 @project: wasm-python-book
 @desc:
 """
-from binary.module import Module, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, ExportTagFunc, \
+from ch11.binary.module import Module, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, ExportTagFunc, \
     ExportTagTable, ExportTagMem, ExportTagGlobal
-from binary.opcodes import Call
-from instance import module
-from interpreter.instructions import instr_table
-from interpreter.vm_func import new_internal_func, new_external_func
-from interpreter.vm_global import GlobalVar
-from interpreter.vm_memory import Memory
-from interpreter.vm_stack_control import ControlStack, ControlFrame
-from interpreter.vm_stack_operand import OperandStack
-from interpreter.vm_table import Table
-from validator.module_validator import validate
+from ch11.binary.opcodes import Call
+from ch11.instance import module
+from ch11.interpreter.instructions import instr_table
+from ch11.interpreter.vm_func import new_internal_func, new_external_func
+from ch11.interpreter.vm_global import GlobalVar
+from ch11.interpreter.vm_memory import Memory
+from ch11.interpreter.vm_stack_control import ControlStack, ControlFrame
+from ch11.interpreter.vm_stack_operand import OperandStack
+from ch11.interpreter.vm_table import Table
+from ch11.validator.module_validator import validate
 
 
 class VM(OperandStack, ControlStack, module.Module):
