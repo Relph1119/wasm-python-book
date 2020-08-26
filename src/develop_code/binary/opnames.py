@@ -188,3 +188,16 @@ opnames[I64Extend8S] = "i64.extend8_s"
 opnames[I64Extend16S] = "i64.extend16_s"
 opnames[I64Extend32S] = "i64.extend32_s"
 opnames[TruncSat] = "trunc_sat"
+
+op_map = dict()
+
+for opcode, opname in enumerate(opnames):
+    if opname != "":
+        op_map[opname] = opcode
+
+
+def get_opcode(opname):
+    opcode = op_map.get(opname, "")
+    if opcode == "":
+        return opcode, False
+    return opcode, True

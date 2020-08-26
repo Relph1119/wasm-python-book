@@ -13,19 +13,16 @@ from interpreter import *
 
 def new_env():
     env = NativeModule()
-    env.register_func("print_char(i32)->()", print_char)
     env.register_func("assert_true(i32)->()", assert_true)
     env.register_func("assert_false(i32)->()", assert_false)
     env.register_func("assert_eq_i32(i32,i32)->()", assert_eq_i32)
     env.register_func("assert_eq_i64(i64,i64)->()", assert_eq_i64)
     env.register_func("assert_eq_f32(f32,f32)->()", assert_eq_f32)
     env.register_func("assert_eq_f64(f64,f64)->()", assert_eq_f64)
+    env.register_func("print_i32(i32)->()", print_i32)
+    env.register_func("print_i64(i64)->()", print_i64)
+    env.register_func("print_char(i32)->()", print_char)
     return env
-
-
-def print_char(args):
-    print("%c" % int(args[0]), end='')
-    return None, None
 
 
 def assert_true(args):
@@ -55,6 +52,21 @@ def assert_eq_f32(args):
 
 def assert_eq_f64(args):
     __assert_equal(float64(args[0]), float64(args[1]))
+    return None, None
+
+
+def print_i32(args):
+    print("%i" % int(args[0]), end='')
+    return None, None
+
+
+def print_i64(args):
+    print("%i" % int(args[0]), end='')
+    return None, None
+
+
+def print_char(args):
+    print("%c" % int(args[0]), end='')
     return None, None
 
 

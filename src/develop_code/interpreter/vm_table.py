@@ -13,9 +13,9 @@ from interpreter.errors import ErrUndefinedElem, ErrUninitializedElem
 
 
 class Table(module.Table):
-    def __init__(self, tt=None):
-        self.type = tt
-        self.elems = [None] * tt.limits.min
+    def __init__(self, table_type=None):
+        self.type = table_type
+        self.elems = [None] * table_type.limits.min
 
     @property
     def size(self):

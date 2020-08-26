@@ -182,7 +182,8 @@ class WasmReader:
 
     def read_custom_sec(self):
         sec_reader = WasmReader(data=self.read_bytes())
-        return CustomSec(name=sec_reader.read_name(), custom_sec_bytes=sec_reader.data)
+        return CustomSec(name=sec_reader.read_name(),
+                         custom_sec_bytes=sec_reader.data)
 
     def read_non_custom_sec(self, sec_id, module):
         if sec_id == SecTypeID:
@@ -270,7 +271,8 @@ class WasmReader:
         return vec
 
     def read_export(self):
-        return Export(self.read_name(), self.read_export_desc())
+        return Export(self.read_name(),
+                      self.read_export_desc())
 
     def read_export_desc(self):
         desc = ExportDesc(tag=self.read_byte(), idx=self.read_var_u32())

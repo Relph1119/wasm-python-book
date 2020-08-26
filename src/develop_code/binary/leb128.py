@@ -11,6 +11,19 @@ Wasm二进制格式使用LEB1128来编码列表长度和索引等整数值
 from binary.errors import ErrIntTooLong, ErrIntTooLarge, ErrUnexpectedEnd
 
 
+def encode_var_uint(val, size):
+    buf = []
+    while True:
+        b = val & 0x7f
+        val >>= 7
+        if val != 0:
+            b |= 0x80
+        buf.append(b)
+        if val == 0:
+            break
+    return buf
+
+
 def decode_var_uint(data, size: int):
     """
     LEB128无符号整数解码
@@ -29,6 +42,21 @@ def decode_var_uint(data, size: int):
         if b & 0x80 == 0:
             return result, i + 1
     raise ErrUnexpectedEnd
+
+
+def encode_var_int(val, size):
+    buf = []
+    more = True
+    while more:
+        b = val & 0x7f
+        val >>= 7
+        if (val == 0 and 0x40 & b == 0) or \
+                (val == -1 and (0x40 & b != 0)):
+            more = False
+        else:
+            b |= 0x80
+        buf.append(b)
+    return buf
 
 
 def decode_var_int(data, size):

@@ -5,7 +5,12 @@
 
 ## 运行环境
 Python 版本：3.7.2  
-PyCharm 版本：PyCharm 2018.3.7 (Professional Edition)  
+PyCharm 版本：PyCharm 2018.3.7 (Professional Edition) 
+Wabt版本：wabt-1.0.19 
+
+### 工具下载地址
+链接：https://pan.baidu.com/s/1aZtDfSmenpCpj5v1Ojepfg   
+提取码：zh60 
 
 ## 代码结构
 <pre>
@@ -21,7 +26,6 @@ src------------------------------------WebAssembly代码
 +-----ch09-----------------------------对应书中第9章实现代码
 +-----ch10-----------------------------对应书中第10章实现代码
 +-----ch11-----------------------------对应书中第11章实现代码
-+-----ch13-----------------------------对应书中第13章实现代码
 +-----develop_code---------------------持续开发的实现代码
       +-----binary---------------------指令解码
       +-----cmd------------------------主函数执行
@@ -42,8 +46,7 @@ wat2wasm xxx.wat
 ## 代码编写与运行结果
 项目的所有运行都是采用直接运行cmd/main.py的方式，请读者运行时注意。
 
-<details>
-<summary>第2章-二进制格式</summary>
+### 第2章-二进制格式
 
 完成了模块解码器和dump程序。
 传入参数：
@@ -58,17 +61,13 @@ wat2wasm xxx.wat
     int.from_bytes(self.data[:8], byteorder='little')
     ```
 3. 如果该结构体是数组，由于Python无法表示结构数组，故类初始化的时候初始一个数组。
-</details>
 
-<details>
-<summary>第3章-指令集</summary>
+### 第3章-指令集
 
 完成了指令的解码。
 ![](images/ch03/ch03.png)
-</details>
 
-<details>
-<summary>第5章-操作数栈</summary>
+### 第5章-操作数栈
 
 实现了操作栈和虚拟机框架，然后实现了参数和数值指令。
 
@@ -93,25 +92,19 @@ wat2wasm xxx.wat
         val = struct.unpack('>f', struct.pack('>l', val))[0]
         return float32(val)
     ```
-</details>
-
-<details>
-<summary>第6章-内存</summary>
+    
+### 第6章-内存
 
 实现了Wasm内存和相关指令，Wasm内存是一块抽象的RAM（本质上就是个线性的字节数组），并且可以在限制范围内按页动态增长。Wasm提供了丰富的内存指令，用于读写各种基本类型的数值，这些数值在Wasm内存中按小端方式存储。简而言之，Wasm内存和真实内存非常接近，只具备最基本的读写能力，像内存管理、垃圾回收这些高级功能都要靠高级语言自己去解决。也正是因为贴近底层，Wasm程序才能够以接近本地程序的速度被执行。
 
 ![](images/ch06/ch06.png)  
-</details>
 
-<details>
-<summary>第7章-函数调用（上）</summary>
+### 第7章-函数调用（上）
 实现了直接函数调用指令、局部变量和全局变量指令。
 
 ![](images/ch07/ch07.png)
-</details>
 
-<details>
-<summary>第8章-控制指令</summary>
+### 第8章-控制指令
 
 传统的goto/jump指令被Wasm摒弃，取而代之的是结构化控制指令（block、loop、if）和受限的分支指令（br等）。
 
@@ -120,10 +113,7 @@ wat2wasm xxx.wat
 ```shell
 --verbose "wasm-python-book\wat\ch08_fac.wasm"
 ```
-</details>
-
-<details>
-<summary>第9章-函数调用（下）</summary>
+### 第9章-函数调用（下）
 
 设计了本地函数调用接口，并且实现了本地函数调用，然后实现了表和间接函数调用指令。
 1. 执行HelloWorld程序，得到打印结果为"Hello, World!"
@@ -131,26 +121,16 @@ wat2wasm xxx.wat
 
 2. 执行ch09_calc程序，得到加法、减法和乘法的验证结果
 ![](images/ch09/ch09_测试calc程序.png)
-</details>
 
-<details>
-<summary>第10章-链接和实例化</summary>
+### 第10章-链接和实例化
 
 块从二进制格式到函数执行分为3个语义阶段：解码、验证、执行（实例化、函数调用）。模块可以导出或导入4种成员：函数、表、内存、全局变量，多个模块实例链接在一起，共享这4种成员，本章实现模块的链接和实例化。
 ![](images/ch10/ch10.png)
-</details>
 
-<details>
-<summary>第11章-错误处理和验证</summary>
+### 第11章-错误处理和验证
 
 Wasm采用类型安全的操作数栈以及结构化控制指令和受限的跳转指令，这使得函数的字节码很容易被验证，而且可以在线性时间内完成。
 ![](images/ch11/ch11.png)
 
-</details>
-
-<details>
-<summary>第13章-AOT编译器</summary>
-
-</details>
-
 ## 总结
+

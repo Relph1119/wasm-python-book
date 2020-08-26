@@ -264,28 +264,26 @@ class TestInstrNumericFunc(unittest.TestCase):
 
 
 def push_val(vm, val):
-    x = type(val)
-    if x == int32:
+    if isinstance(val, int32):
         vm.push_s32(val)
-    elif x in [int64, int]:
+    elif isinstance(val, int64) or isinstance(val, int):
         vm.push_s64(val)
-    elif x == float32:
+    elif isinstance(val, float32):
         vm.push_f32(val)
-    elif x in [float64, float]:
+    elif isinstance(val, float64) or isinstance(val, float):
         vm.push_f64(val)
     else:
         raise Exception("wrong type: {}".format(val))
 
 
-def pop_val(vm, value):
-    type_info = type(value)
-    if type_info == int32:
+def pop_val(vm, val):
+    if isinstance(val, int32):
         return vm.pop_s32()
-    elif type_info in [int64, int]:
+    elif isinstance(val, int64) or isinstance(val, int):
         return vm.pop_s64()
-    elif type_info == float32:
+    elif isinstance(val, float32):
         return vm.pop_f32()
-    elif type_info in [float64, float]:
+    elif isinstance(val, float64) or isinstance(val, float):
         return vm.pop_f64()
     else:
-        raise Exception("wrong type: {}".format(value))
+        raise Exception("wrong type: {}".format(val))
