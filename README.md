@@ -65,7 +65,7 @@ wat2wasm xxx.wat
 
 ### 第3章-指令集
 
-完成了指令的解码。
+&emsp;&emsp;完成了指令的解码。
 ![](images/ch03/ch03.png)
 
 ### 第5章-操作数栈
@@ -138,6 +138,6 @@ wat2wasm xxx.wat
 > -v, --version : 版本号
 -d, --dump : 打印模块信息
 
-&emsp;&emsp;由于之前有[JVMByPython](https://github.com/Relph1119/JVMByPython)项目的代码实现基础，目前已完成的功能有Wasm的二进制格式解码、指令集、操作数栈和虚拟机、内存及内存指令、函数调用（本地方法和外部方法调用）、实例化模块、模块错误处理和验证等。
-&emsp;&emsp;另：挺感谢作者，在我实现代码期间给予的指导和帮助，目前该项目还需要完成spec的wast格式解析和测试、AOT和JIT的实现等。
+&emsp;&emsp;由于之前有[JVMByPython](https://github.com/Relph1119/JVMByPython)项目的代码实现基础，目前已完成的功能有Wasm的二进制格式解码、指令集、操作数栈和虚拟机、内存及内存指令、函数调用（本地方法和外部方法调用）、实例化模块、模块错误处理和验证等。  
+&emsp;&emsp;另：挺感谢作者在我实现代码期间给予的指导和帮助，目前该项目还需要完成spec的wast格式解析和测试、AOT和JIT的实现等。
 
