@@ -1,4 +1,4 @@
-# WebAssembly的Python实现
+# WebAssembly解释器的Python实现
 
 &emsp;&emsp;项目完全参考张秀宏的《WebAssembly原理与核心技术》代码结构，在此向本书作者表示感谢。  
 &emsp;&emsp;该书的随书代码github地址：https://github.com/zxh0/wasmgo-book  
