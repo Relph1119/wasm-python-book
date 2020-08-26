@@ -135,7 +135,7 @@ wat2wasm xxx.wat
 
 ## 总结
 &emsp;&emsp;历时7天（2020年08月18日——2020年8月24日）完成1-11章的代码，基本实现了一个Wasm解析器，提供如下命令：
-> -v, --version : 版本号
+> -v, --version : 版本号  
 -d, --dump : 打印模块信息
 
 &emsp;&emsp;由于之前有[JVMByPython](https://github.com/Relph1119/JVMByPython)项目的代码实现基础，目前已完成的功能有Wasm的二进制格式解码、指令集、操作数栈和虚拟机、内存及内存指令、函数调用（本地方法和外部方法调用）、实例化模块、模块错误处理和验证等。  
