@@ -415,7 +415,7 @@ def __trailing_zeros64(x):
 
 def __ones_count64(x):
     bin_n = bin(x)
-    num = str(bin_n).count('1')
+    num = bin_n.count('1')
     return num
 
 
