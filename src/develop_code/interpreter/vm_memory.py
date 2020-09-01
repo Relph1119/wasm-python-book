@@ -8,6 +8,7 @@
 @desc: 内存实现
 """
 from binary.module import PageSize, MaxPageCount
+from binary.types import MemType
 from interpreter.errors import ErrMemOutOfBounds
 
 
@@ -48,3 +49,8 @@ class Memory:
         """检查边界"""
         if len(self.data) - length < offset:
             raise ErrMemOutOfBounds
+
+
+def new_memory(min, max):
+    mt = MemType(min=min, max=max)
+    return Memory(mt)

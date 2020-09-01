@@ -11,7 +11,7 @@ from instance.native_module import NativeModule
 from interpreter import *
 
 
-def new_env():
+def new_test_env():
     env = NativeModule()
     env.register_func("assert_true(i32)->()", assert_true)
     env.register_func("assert_false(i32)->()", assert_false)

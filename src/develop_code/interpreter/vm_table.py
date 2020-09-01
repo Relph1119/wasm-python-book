@@ -7,7 +7,7 @@
 @project: wasm-python-book
 @desc:
 """
-
+from binary.types import TableType, FuncRef, Limits
 from instance import module
 from interpreter.errors import ErrUndefinedElem, ErrUninitializedElem
 
@@ -38,3 +38,9 @@ class Table(module.Table):
     def check_idx(self, idx):
         if idx >= len(self.elems):
             raise ErrUndefinedElem
+
+
+def new_table(min_value, max_value):
+    tt = TableType(elem_type=FuncRef,
+                   limits=Limits(min=min_value, max=max_value))
+    return Table(tt)

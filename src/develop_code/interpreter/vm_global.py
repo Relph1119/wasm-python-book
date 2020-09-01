@@ -7,6 +7,7 @@
 @project: wasm-python-book
 @desc:
 """
+from binary.types import GlobalType
 from instance import module
 from interpreter.errors import ErrImmutableGlobal
 from interpreter.val import wrap_u64, unwrap_u64
@@ -30,3 +31,10 @@ class GlobalVar(module.Global):
 
     def set(self, val):
         self.val = unwrap_u64(self.type.val_type, val)
+
+
+def new_global(vt, mut, val):
+    gt = GlobalType(val_type=vt)
+    if mut:
+        gt.mut = 1
+    return GlobalVar(gt=gt, val=val)

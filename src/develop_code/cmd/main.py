@@ -11,9 +11,10 @@ import os
 from optparse import OptionParser
 
 import binary
-from text import compiler
 from cmd.dumper import dump
-from cmd.native import new_env
+from cmd.test_env import new_test_env
+from spectest import wast_tester
+from text import compiler
 
 
 def main(input_args):
@@ -58,7 +59,10 @@ def dump_wasm(file_name):
 def test_wast(file_name):
     print("test " + file_name)
     s, err = compiler.compile_script_file(file_name)
-    print(file_name)
+    if err is not None:
+        return err
+    else:
+        return wast_tester.test_wast(s)
 
 
 def test_wast_files(path):
@@ -83,7 +87,7 @@ def exec_wasm(file_name):
     from interpreter.vm import new
     module, err = binary.decode_file(file_name)
 
-    mm = dict({"env": new_env()})
+    mm = dict({"env": new_test_env()})
     m, err = new(module, mm)
     if err is None:
         _, err = m.invoke_func("main")
@@ -103,8 +107,13 @@ if __name__ == '__main__':
     # file_name = os.path.join(os.path.dirname(root_path), "..\\js", "ch01_hw.wasm")
     # fake_args = ["-c", file_name]
 
+    # test_one_files
+    test_wast_file_path = os.path.join(os.path.dirname(os.path.dirname(root_path)),
+                                       "spec", "test", "core", "address.wast")
+    fake_args = ['--test-one', test_wast_file_path]
+
     # test_all_files
-    test_wast_file_dir = os.path.join(os.path.dirname(os.path.dirname(root_path)), "spec", "test", "core")
-    fake_args = ['-t', test_wast_file_dir]
+    # test_wast_file_dir = os.path.join(os.path.dirname(os.path.dirname(root_path)), "spec", "test", "core")
+    # fake_args = ['-t', test_wast_file_dir]
     print("main.py", *fake_args, end='\n\n')
     main(fake_args)
