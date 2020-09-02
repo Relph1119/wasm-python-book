@@ -8,6 +8,8 @@
 @desc:
 """
 from binary.module import Locals
+from text.errors import new_verification_error
+from text.num_parser import parse_u32
 
 
 class CodeBuilder:
@@ -45,7 +47,22 @@ class CodeBuilder:
         self.block_depth -= 1
 
     def define_label(self, name):
-        self.label_names.define_name
+        self.label_names.define_label(name, self.block_depth)
+
+    def get_br_label_idx(self, _var):
+        err = None
+        depth = 0
+        if _var[0] != '$':
+            idx = int(parse_u32(_var))
+            if idx > self.block_depth:
+                return -1, new_verification_error("invalid depth: %d (max %d)",
+                                                  (idx, self.block_depth))
+            return idx, None
+        try:
+            depth = self.label_names.get_idx(_var)
+        except Exception as e:
+            err = e
+        return self.block_depth - depth, err
 
 
 def new_code_builder():

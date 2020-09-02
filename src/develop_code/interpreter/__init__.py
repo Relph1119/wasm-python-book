@@ -55,11 +55,37 @@ class uint64(int):
 
 class float32(float):
     def __new__(cls, val):
-        val = ctypes.c_float(val).value
-        return super().__new__(cls, val)
+        if isinstance(val, str):
+            if val.find('nan') >= 0:
+                if val.startswith("-"):
+                    val = 0xffc00000
+                else:
+                    val = 0x7fc00000
+            elif val.find('inf') >= 0:
+                if val.startswith("-"):
+                    val = 0xff800000
+                else:
+                    val = 0x7f800000
+            return val
+        else:
+            val = ctypes.c_float(val).value
+            return super().__new__(cls, val)
 
 
 class float64(float):
     def __new__(cls, val):
-        val = ctypes.c_double(val).value
-        return super().__new__(cls, val)
+        if isinstance(val, str):
+            if val.find('nan') >= 0:
+                if val.startswith("-"):
+                    val = 0xfff8000000000001
+                else:
+                    val = 0x7ff8000000000001
+            elif val.find('inf') >= 0:
+                if val.startswith("-"):
+                    val = 0xfff0000000000000
+                else:
+                    val = 0x7ff0000000000000
+            return val
+        else:
+            val = ctypes.c_double(val).value
+            return super().__new__(cls, val)

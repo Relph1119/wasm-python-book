@@ -23,9 +23,9 @@ class Expr(list):
 class Instruction:
     """指令"""
 
-    def __init__(self):
+    def __init__(self, opcode=None):
         # 操作码
-        self.opcode = None
+        self.opcode = opcode
         # 操作数
         self.args = None
 
@@ -39,14 +39,16 @@ class Instruction:
 class BlockArgs:
     """block和loop指令的参数"""
 
-    def __init__(self):
+    def __init__(self, bt=None, instrs=None):
         # block type:
         # -1表示i32类型结果，-2表示i64类型结果，
         # -3表示f32类型结果，-4表示f64类型结果，
         # -64表示没有结果
-        self.bt = None
+        if instrs is None:
+            instrs = []
+        self.bt = bt
         # 内嵌的指令序列
-        self.instrs = []
+        self.instrs = instrs
 
 
 class IfArgs:
