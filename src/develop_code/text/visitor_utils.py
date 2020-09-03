@@ -9,11 +9,11 @@
 """
 
 
-def get_expr(node, v):
+def get_expr(node, visitor):
     if node is None:
         return []
     else:
-        return node.accept(v)
+        return node.accept(visitor)
 
 
 def get_text(node):

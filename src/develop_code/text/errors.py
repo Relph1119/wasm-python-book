@@ -23,7 +23,9 @@ class ValidationError:
         self.msg = get_err_detail(self.msg, self.token, input)
 
 
-def new_verification_error(format_str, a):
+def new_verification_error(format_str, a=None):
+    if a is None:
+        return ValidationError(format_str)
     return ValidationError(msg=format_str % (tuple(a)))
 
 
@@ -40,7 +42,9 @@ class SemanticError(Exception):
         self.msg = get_err_detail(self.msg, self.token, input)
 
 
-def new_semantic_error(format_str, a):
+def new_semantic_error(format_str, a=None):
+    if a is None:
+        return SemanticError(format_str)
     return SemanticError(msg=format_str % (tuple(a)))
 
 

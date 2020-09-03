@@ -64,4 +64,3 @@ def new_block_instr(opname, bt, expr1, expr2):
         raise Exception("unreachable")
 
     return instr
-

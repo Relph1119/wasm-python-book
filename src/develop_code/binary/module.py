@@ -163,13 +163,13 @@ class ImportDesc:
     import_desc: tag|[type_idx, table_type, mem_type, global_type]
     """
 
-    def __init__(self, tag):
+    def __init__(self, tag, func_type=0, table=None, mem=None, global_type=None):
         # 0表示函数、1表示表、2表示内存、3表示全局变量
         self.tag = tag
-        self.func_type = TypeIdx
-        self.table = None
-        self.mem = None
-        self.global_type = None
+        self.func_type = func_type
+        self.table = table
+        self.mem = mem
+        self.global_type = global_type
 
 
 class Global:

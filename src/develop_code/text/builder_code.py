@@ -8,6 +8,7 @@
 @desc:
 """
 from binary.module import Locals
+from text.builder_symbols import new_symbol_table
 from text.errors import new_verification_error
 from text.num_parser import parse_u32
 
