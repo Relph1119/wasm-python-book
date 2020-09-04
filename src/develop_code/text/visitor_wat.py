@@ -9,15 +9,18 @@
 """
 import math
 
+from binary.instruction import BrTableArgs, MemArg
 from binary.module import Import, ImportDesc, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, \
     ExportTagFunc, ExportTagTable, PageSize, ExportTagMem, ExportTagGlobal
+from binary.opcodes import *
 from binary.types import Limits, ValTypeI32, ValTypeI64, ValTypeF32, ValTypeF64, BlockTypeI32, BlockTypeI64, \
-    BlockTypeF32, BlockTypeF64, FuncType, BlockTypeEmpty
+    BlockTypeF32, BlockTypeF64, FuncType, BlockTypeEmpty, MutConst, MutVar, GlobalType, TableType
 from text.builder_code import new_code_builder
-from text.builder_instr import new_i32_const0
+from text.builder_instr import new_i32_const0, new_block_instr, new_instruction
 from text.builder_module import new_module_builder
 from text.error_reporter import ErrorReporter
 from text.errors import new_verification_error
+from text.num_parser import parse_u32, parse_i32, parse_i64, parse_f32, parse_f64
 from text.parser.WASTParser import WASTParser
 from text.parser.WASTVisitor import WASTVisitor
 from text.visitor_utils import get_text, get_str, get_expr, get_all_str
@@ -30,6 +33,8 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         super().__init__()
         self.module_builder = None
         self.code_builder = None
+        self.error_reporter = ErrorReporter()
+        super(ErrorReporter, self.error_reporter).__init__()
 
     def visitModule(self, ctx: WASTParser.ModuleContext):
         return ctx.watModule().accept(self).module
@@ -38,7 +43,7 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         name = get_text(ctx.NAME())
         self.module_builder = new_module_builder()
         self.module_builder.pass_ = 1
-        nv = WatNamesVisitor()
+        nv = WatNamesVisitor(self.error_reporter)
         nv.module_builder = self.module_builder
         for field in ctx.moduleField():
             field.accept(self)
@@ -58,7 +63,7 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         pass_ = self.module_builder.pass_
         if pass_ == 1:
             if ctx.typeDef() is not None:
-                ctx.typeDef().accept()
+                ctx.typeDef().accept(self)
         elif pass_ == 2:
             if ctx.typeDef() is None:
                 ctx.getChild(0).accept(self)
@@ -124,7 +129,7 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         name = ctx.NAME()
         if name is not None:
             vt = ctx.valType(0).accept(self)
-            err = self.code_builder.add_local(name.text, vt)
+            err = self.code_builder.add_local(name.getText(), vt)
             self.report_err(err, name)
         else:
             for vt in ctx.valType():
@@ -224,13 +229,13 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         return None
 
     def visitExportDesc(self, ctx: WASTParser.ExportDescContext):
-        return [ctx.kind.text, ctx.variable().text]
+        return [ctx.kind.text, ctx.variable().getText()]
 
     def visitStart(self, ctx: WASTParser.StartContext):
         err = self.module_builder.ensure_no_start()
         self.report_err(err, ctx.getChild(1))
         _var = ctx.variable()
-        err = self.module_builder.add_start(_var.text)
+        err = self.module_builder.add_start(_var.getText())
         self.report_err(err, _var)
         return None
 
@@ -264,7 +269,7 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         ft = ctx.funcType().accept(self)
         _var = ctx.variable()
         if _var is not None:
-            idx, err = self.module_builder.get_func_type_idx(_var.text)
+            idx, err = self.module_builder.get_func_type_idx(_var.getText())
             if err is not None:
                 self.report_err(err, _var)
                 return idx
@@ -277,7 +282,7 @@ class WatVisitor(WASTVisitor, ErrorReporter):
             else:
                 if ft.get_signature() != ft_use.get_signature():
                     msg = "type mismatch"
-                    if ctx.parentCtx is not None:
+                    if isinstance(ctx.parentCtx, WASTParser.PlainInstrContext):
                         msg += " in call_indirect"
                     err = new_verification_error(msg)
                     self.report_err(err, ctx.getChild(1))
@@ -289,7 +294,7 @@ class WatVisitor(WASTVisitor, ErrorReporter):
     def visitFuncVars(self, ctx: WASTParser.FuncVarsContext):
         func_indices = []
         for _var in ctx.variable():
-            idx, err = self.module_builder.get_func_idx(_var.text)
+            idx, err = self.module_builder.get_func_idx(_var.getText())
             self.report_err(err, _var)
             func_indices.append(idx)
         return func_indices
@@ -330,7 +335,209 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         return BlockTypeEmpty
 
     def visitGlobalType(self, ctx: WASTParser.GlobalTypeContext):
-        pass
+        vt = ctx.valType().accept(self)
+        mut = MutConst
+        if ctx.getChildCount() > 1:
+            mut = MutVar
+        return GlobalType(val_type=vt, mut=mut)
+
+    def visitMemoryType(self, ctx: WASTParser.MemoryTypeContext):
+        return ctx.limits().accept(self)
+
+    def visitTableType(self, ctx: WASTParser.TableTypeContext):
+        return TableType(elem_type=FuncType,
+                         limits=ctx.limits().accept(self))
+
+    def visitLimits(self, ctx: WASTParser.LimitsContext):
+        mt = Limits()
+        mt.min = parse_u32(ctx.nat(0).getText())
+        max_value = ctx.nat(1)
+        if max_value is not None:
+            mt.tag = 1
+            mt.max = parse_u32(max_value.getText())
+        return mt
+
+    def visitFuncType(self, ctx: WASTParser.FuncTypeContext):
+        ft = FuncType()
+        for param in ctx.param():
+            ft.param_types.extend(param.accept(self))
+        for result in ctx.result():
+            ft.result_types.extend(result.accept(self))
+        return ft
+
+    def visitParam(self, ctx: WASTParser.ParamContext):
+        params = []
+        name = ctx.NAME()
+        if name is not None:
+            vt = ctx.valType(0).accept(self)
+            params.append(vt)
+            if self.code_builder is not None:
+                err = self.code_builder.add_param(name.getText())
+                self.report_err(err, name)
+        else:
+            for vt in ctx.valType():
+                params.append(vt.accept(self))
+                if self.code_builder is not None:
+                    self.code_builder.add_param("")
+
+        return params
+
+    def visitResult(self, ctx: WASTParser.ResultContext):
+        vts = ctx.valType()
+        results = []
+        for vt in ctx.valType():
+            results.append(vt.accept(self))
+        return results
+
+    def visitExpr(self, ctx: WASTParser.ExprContext):
+        expr = []
+        for instr in ctx.instr():
+            instrs = instr.accept(self)
+            expr.extend(instrs)
+        return expr
+
+    def visitInstr(self, ctx: WASTParser.InstrContext):
+        if ctx.plainInstr() is not None:
+            instr = ctx.plainInstr().accept(self)
+            return [instr]
+        if ctx.blockInstr() is not None:
+            instr = ctx.blockInstr().accept(self)
+            return [instr]
+        return ctx.foldedInstr().accept(self)
+
+    def visitFoldedInstr(self, ctx: WASTParser.FoldedInstrContext):
+        instrs = []
+        for floded_instr in ctx.foldedInstr():
+            instrs.append(floded_instr.accept(self))
+
+        op = ctx.op
+        if op is not None:
+            try:
+                self.code_builder.enter_block()
+            except Exception:
+                self.code_builder.exit_block()
+
+            label = ctx.label
+            if label is not None:
+                self.code_builder.define_label(label.text)
+
+            op = ctx.op.text
+            rt = ctx.blockType().accept(self)
+            expr1 = ctx.expr(0).accept(self)
+            expr2 = get_expr(ctx.expr(1), self)
+            instr = new_block_instr(op, rt, expr1, expr2)
+        else:
+            instr = ctx.plainInstr().accept(self)
+
+        instrs.append(instr)
+        return instrs
+
+    def visitBlockInstr(self, ctx: WASTParser.BlockInstrContext):
+        self.code_builder.enter_block()
+        self.code_builder.exit_block()
+
+        label = ctx.label
+        if label is not None:
+            self.code_builder.define_label(label.text)
+
+        op = ctx.op.text
+        rt = ctx.blockType().accept(self)
+        expr1 = ctx.expr(0).accept(self)
+        expr2 = get_expr(ctx.expr(1), self)
+        return new_block_instr(op, rt, expr1, expr2)
+
+    def visitPlainInstr(self, ctx: WASTParser.PlainInstrContext):
+        if ctx.constInstr() is not None:
+            return ctx.constInstr().accept(self)
+
+        op = ctx.op.text
+        instr = new_instruction(op)
+        opcode = instr.opcode
+
+        if opcode in [Br, BrIf]:
+            _var = ctx.variable(0)
+            idx, err = self.code_builder.get_br_label_idx(_var.getText())
+            instr.args = idx
+            self.report_err(err, ctx.variable(0))
+        elif opcode == BrTable:
+            labels = []
+            for _var in ctx.variable():
+                idx, err = self.code_builder.get_br_label_idx(_var.getText())
+                labels.append(idx)
+                self.report_err(err, _var)
+
+            instr.args = BrTableArgs(labels=labels[:len(labels) - 1],
+                                     default=labels[len(labels) - 1])
+        elif opcode == Call:
+            _var = ctx.variable(0)
+            idx, err = self.module_builder.get_func_idx(_var.getText())
+            instr.args = idx
+            self.report_err(err, _var)
+        elif opcode == CallIndirect:
+            ft_idx = ctx.typeUse().accept(self)
+            instr.args = ft_idx
+            # TODO
+
+        if LocalGet <= opcode <= LocalTee:
+            _var = ctx.variable(0)
+            if self.code_builder is not None:
+                idx, err = self.code_builder.get_local_idx(_var.getText())
+                instr.args = idx
+                self.report_err(err, _var)
+            else:
+                instr.args = parse_u32(_var.getText())
+        elif GlobalGet <= opcode <= GlobalSet:
+            _var = ctx.variable(0)
+            idx, err = self.module_builder.get_global_idx(_var.getText())
+            instr.args = idx
+            self.report_err(err, _var)
+        elif I32Load <= opcode <= I64Store32:
+            instr.args = ctx.memArg().accept(self)
+
+        return instr
+
+    def visitConstInstr(self, ctx: WASTParser.ConstInstrContext):
+        instr = new_instruction(ctx.op.text)
+        val = ctx.value().getText()
+        opcode = instr.opcode
+        if opcode == I32Const:
+            instr.args = parse_i32(val)
+        elif opcode == I64Const:
+            instr.args = parse_i64(val)
+        elif opcode == F32Const:
+            instr.args = parse_f32(val)
+        elif opcode == F64Const:
+            instr.args = parse_f64(val)
+        else:
+            raise Exception("unreachable")
+        return instr
+
+    def visitMemArg(self, ctx: WASTParser.MemArgContext):
+        mem_arg = MemArg()
+        offset = ctx.offset
+        if offset is not None:
+            mem_arg.offset = parse_u32(offset.text)
+        align = ctx.align
+        if align is not None:
+            align_val = parse_u32(align.text)
+            if align_val == 1:
+                mem_arg.align = 0
+            elif align_val == 2:
+                mem_arg.align = 1
+            elif align_val == 4:
+                mem_arg.align = 2
+            elif align_val == 8:
+                mem_arg.align = 3
+            elif align_val == 16:
+                mem_arg.align = 4
+            elif align_val == 32:
+                mem_arg.align = 5
+            elif align_val == 64:
+                mem_arg.align = 6
+            else:
+                raise Exception("invalid align")
+
+        return mem_arg
 
 
 def new_wat_visitor():

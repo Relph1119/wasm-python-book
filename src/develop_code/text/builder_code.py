@@ -34,7 +34,7 @@ class CodeBuilder:
             return err
 
         n = len(self.locals)
-        if n == 0 or isinstance(self.locals[n - 1], val_type):
+        if n == 0 or self.locals[n - 1].type == val_type:
             self.locals.append(Locals(1, val_type))
         else:
             self.locals[n - 1].n += 1
@@ -51,18 +51,13 @@ class CodeBuilder:
         self.label_names.define_label(name, self.block_depth)
 
     def get_br_label_idx(self, _var):
-        err = None
-        depth = 0
         if _var[0] != '$':
             idx = int(parse_u32(_var))
             if idx > self.block_depth:
                 return -1, new_verification_error("invalid depth: %d (max %d)",
                                                   (idx, self.block_depth))
             return idx, None
-        try:
-            depth = self.label_names.get_idx(_var)
-        except Exception as e:
-            err = e
+        depth, err = self.label_names.get_idx(_var)
         return self.block_depth - depth, err
 
 
@@ -70,3 +65,4 @@ def new_code_builder():
     code_builder = CodeBuilder()
     code_builder.local_names = new_symbol_table("parameter")
     code_builder.label_names = new_symbol_table("label")
+    return code_builder

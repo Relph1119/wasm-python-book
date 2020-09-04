@@ -7,10 +7,12 @@
 @project: wasm-python-book
 @desc:
 """
-from antlr4 import InputStream, Token
+import platform
+
+from antlr4 import Token
 
 
-class ValidationError:
+class ValidationError(Exception):
     def __init__(self, msg=""):
         self.msg = msg
         self.token = None
@@ -20,7 +22,7 @@ class ValidationError:
         return self.msg
 
     def fill_detail(self, input):
-        self.msg = get_err_detail(self.msg, self.token, input)
+        self.msg = get_err_detail(self.msg, self.token.symbol, input)
 
 
 def new_verification_error(format_str, a=None):
@@ -39,7 +41,7 @@ class SemanticError(Exception):
         return self.msg
 
     def fill_detail(self, input):
-        self.msg = get_err_detail(self.msg, self.token, input)
+        self.msg = get_err_detail(self.msg, self.token.symbol, input)
 
 
 def new_semantic_error(format_str, a=None):
@@ -48,7 +50,7 @@ def new_semantic_error(format_str, a=None):
     return SemanticError(msg=format_str % (tuple(a)))
 
 
-class SyntaxError:
+class SyntaxError(Exception):
     def __init__(self, msg="", line=0, column=0, token=None):
         self.msg = msg
         self.line = line
@@ -66,19 +68,24 @@ class SyntaxErrors(list):
 
     def fill_detail(self, input):
         for err in self:
-            err.msg = get_err_detail(err.msg, err.token, input)
+            err.msg = get_err_detail(err.msg, err.token.symbol, input)
 
     @property
     def error(self):
         return '\n'.join(self)
 
 
-def get_err_detail(msg, token: Token, input: InputStream):
-    msg = "%s:%d:%d: error: %s" % (input.name, token.line, token.column + 1, msg)
+def get_err_detail(msg, token: Token, input):
+    source_name = "Obtained from string"
+    if hasattr(input, "fileName"):
+        source_name = input.fileName
+    msg = "%s:%d:%d: error: %s" % (source_name, token.line, token.column + 1, msg)
     all_text = "%s" % input
     err_line = all_text.split("\n")[token.line - 1]
     under_line = get_under_line(token.column, token)
-    return "\n".join([msg, err_line, under_line])
+    if platform.system() == "Windows":
+        return msg + "\r\n" + err_line + "\n" + under_line
+    return msg + "\n" + err_line + "\n" + under_line
 
 
 def get_under_line(column, token):

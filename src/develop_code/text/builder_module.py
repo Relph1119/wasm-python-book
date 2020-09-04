@@ -175,7 +175,7 @@ class ModuleBuilder:
                                          vec_init=init_data))
         return None
 
-    def add_dat(self, _var: str, offset: list, init_data: str):
+    def add_data(self, _var: str, offset: list, init_data: str):
         if _var != "":
             _, err = self.get_mem_idx(_var)
             if err is not None:

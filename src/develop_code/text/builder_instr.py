@@ -13,10 +13,10 @@ from binary.opnames import get_opcode
 
 
 def new_instruction(opname):
-    try:
-        opcode = get_opcode(opname)
+    opcode, found = get_opcode(opname)
+    if found:
         return Instruction(opcode)
-    except Exception:
+    else:
         return new_trunc_sat(opname)
 
 
@@ -47,6 +47,7 @@ def new_i32_const0():
     instr = Instruction()
     instr.opcode = I32Const
     instr.args = 0
+    return instr
 
 
 def new_block_instr(opname, bt, expr1, expr2):

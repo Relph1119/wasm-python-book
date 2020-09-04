@@ -17,9 +17,11 @@ from text.visitor_utils import get_text
 
 
 class WatNamesVisitor(WASTVisitor, ErrorReporter):
-    def __init__(self):
+    def __init__(self, error_reporter=ErrorReporter()):
         super().__init__()
         self.module_builder = None
+        self.error_reporter = error_reporter
+        super(ErrorReporter, self.error_reporter).__init__()
 
     def visitModuleField(self, ctx: WASTParser.ModuleFieldContext):
         def accept(val):
@@ -30,6 +32,8 @@ class WatNamesVisitor(WASTVisitor, ErrorReporter):
         accept(imp)
         f = ctx.func_()
         accept(f)
+        t = ctx.table()
+        accept(t)
         m = ctx.memory()
         accept(m)
         g = ctx.global_()
@@ -78,7 +82,7 @@ class WatNamesVisitor(WASTVisitor, ErrorReporter):
             if err is not None:
                 self.report_err(err, name)
         else:
-            err = self.module_builder.defind_name(kind, get_text(name))
+            err = self.module_builder.define_name(kind, get_text(name))
             if err is not None:
                 self.report_err(err, name)
         return None

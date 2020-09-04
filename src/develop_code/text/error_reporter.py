@@ -15,7 +15,7 @@ from text.parser.WASTParser import ParserRuleContext
 
 class ErrorReporter:
     def __init__(self):
-        self.reports_validation_error = None
+        self.reports_validation_error = True
 
     def report_err(self, err, node):
         if err is not None:
