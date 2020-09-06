@@ -304,11 +304,12 @@ def validate_limits(limits, k, kind):
             # TODO
             pass
     if limits.tag == 1:
-        if kind == "mem":
-            return "memory size must be at most 65536 pages (4GiB)"
-        else:
-            # TODO
-            pass
+        if limits.max > k:
+            if kind == "mem":
+                return "memory size must be at most 65536 pages (4GiB)"
+            else:
+                # TODO
+                pass
         if limits.max < limits.min:
             return "size minimum must not be greater than maximum"
 

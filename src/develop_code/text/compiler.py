@@ -23,7 +23,6 @@ def compile_module_file(file_name):
         return m, err
     except Exception as e:
         err = e
-        raise err
         return None, err
 
 

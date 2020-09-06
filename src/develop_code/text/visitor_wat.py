@@ -186,7 +186,6 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         return None
 
     def visitGlobal(self, ctx: WASTParser.GlobalContext):
-        idx = 0
         if ctx.embeddedIm() is not None:
             imp = ctx.embeddedIm().accept(self)
             imp.desc = ImportDesc(tag=ImportTagGlobal,
@@ -205,9 +204,6 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         return None
 
     def visitExport(self, ctx: WASTParser.ExportContext):
-        idx = 0
-        err = None
-
         name = get_str(ctx.STRING())
         kind_and_var = ctx.exportDesc().accept(self)
         if kind_and_var[0] == "func":
@@ -386,7 +382,7 @@ class WatVisitor(WASTVisitor, ErrorReporter):
     def visitResult(self, ctx: WASTParser.ResultContext):
         vts = ctx.valType()
         results = []
-        for vt in ctx.valType():
+        for vt in vts:
             results.append(vt.accept(self))
         return results
 

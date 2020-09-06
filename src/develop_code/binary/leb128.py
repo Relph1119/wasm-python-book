@@ -33,7 +33,7 @@ def decode_var_uint(data, size: int):
     """
     result = 0
     for i, b in enumerate(data):
-        if i == size / 7:
+        if i == int(size / 7):
             if b & 0x80 != 0:
                 raise ErrIntTooLong
             if b >> (size - i * 7) > 0:
@@ -68,7 +68,7 @@ def decode_var_int(data, size):
     """
     result = 0
     for i, b in enumerate(data):
-        if i == size / 7:
+        if i == int(size / 7):
             if b & 0x80 != 0:
                 raise ErrIntTooLong
             if b & 0x40 == 0 and b >> (size - i * 7 - 1) != 0 or \

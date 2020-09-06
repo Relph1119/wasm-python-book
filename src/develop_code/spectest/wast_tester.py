@@ -34,10 +34,9 @@ class WastTester:
             if isinstance(cmd, WatModule):
                 err = self.instantiate(cmd)
             elif isinstance(cmd, BinaryModule):
-                self.instantiate_bin(cmd)
+                err = self.instantiate_bin(cmd)
             elif isinstance(cmd, QuotedModule):
                 err = Exception("TODO")
-                raise err
             elif isinstance(cmd, Register):
                 self.instances[cmd.module_name] = self.instance
             elif isinstance(cmd, Action):
@@ -46,10 +45,8 @@ class WastTester:
                 err = self.run_assertion(cmd)
             elif isinstance(cmd, Meta):
                 err = Exception("TODO")
-                raise err
             else:
                 err = Exception("unreachable")
-                raise err
         if err is not None:
             return err
 
@@ -65,9 +62,10 @@ class WastTester:
     def instantiate_bin(self, module):
         tmp, err = self.wasm_impl.instantiate_bin(module.data, self.instances)
         if err is not None:
-            raise err
+            return err
         self.instance = tmp
         self.instances[module.name] = self.instance
+        return None
 
     def run_assertion(self, assertion):
         kind = assertion.kind
