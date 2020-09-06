@@ -59,7 +59,6 @@ class WastTester:
             if module.name != "":
                 self.instances[module.name] = self.instance
         else:
-            raise err
             err = "line: %d, %s" % (module.line, err.error)
         return err
 

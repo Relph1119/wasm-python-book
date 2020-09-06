@@ -371,9 +371,16 @@ class WasmReader:
         return gt
 
     def read_limits(self):
-        limits = Limits(self.read_byte(), self.read_var_u32())
-        if limits.tag == 1:
-            limits.max = self.read_var_u32()
+        tag = self.read_byte()
+        if tag > 0x80:
+            raise Exception("integer representation too long")
+        if tag > 1:
+            raise Exception("integer too large")
+        min_value = self.read_var_u32()
+        max_value = 0
+        if tag == 1:
+            max_value = self.read_var_u32()
+        limits = Limits(tag, min_value, max_value)
         return limits
 
     def read_indices(self):

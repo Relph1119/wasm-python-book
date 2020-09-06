@@ -12,6 +12,9 @@
 class ErrUnexpectedEnd(Exception):
     """方法或段结束异常"""
 
+    def __init__(self):
+        super().__init__("unexpected end of section or function")
+
     def __str__(self):
         print("unexpected end of section or function")
 
@@ -19,12 +22,18 @@ class ErrUnexpectedEnd(Exception):
 class ErrIntTooLong(Exception):
     """Int类型超长"""
 
+    def __init__(self):
+        super().__init__("integer representation too long")
+
     def __str__(self):
         print("integer representation too long")
 
 
 class ErrIntTooLarge(Exception):
     """Int类型值太大"""
+
+    def __init__(self):
+        super().__init__("integer too large")
 
     def __str__(self):
         print("integer too large")
