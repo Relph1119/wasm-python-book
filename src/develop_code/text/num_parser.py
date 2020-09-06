@@ -9,7 +9,7 @@
 """
 import math
 
-from interpreter import uint32, int32, int64, float32
+from interpreter import uint32, int32, int64, float32, float64
 
 
 def parse_u32(s: str):
@@ -40,9 +40,9 @@ def parse_int(s, bit_size):
         s = s.replace("0x", "", 1)
         base = 16
     if s.startswith("-"):
-        i = int(s)
+        i = int(s, base)
     else:
-        u = int(s)
+        u = int(s, base)
         i = int64(u)
     return i
 
@@ -69,7 +69,7 @@ def parse_float(s: str):
 
 def parse_nan32(s: str):
     s = s.replace("_", "")
-    f = float32(math.nan)
+    f = float32('nan')
     if s[0] == '-':
         f = -f
         s = s[1:]
@@ -85,7 +85,7 @@ def parse_nan32(s: str):
 
 def parse_nan64(s: str):
     s = s.replace("_", "")
-    f = math.nan
+    f = float64('nan')
     if s[0] == '-':
         f = -f
         s = s[1:]

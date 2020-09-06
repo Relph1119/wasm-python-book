@@ -172,8 +172,8 @@ class CodeValidator:
         for instr in expr:
             self.instr_path[depth] = instr.get_opname()
             self.validate_instr(instr)
-
-        self.instr_path.pop(depth)
+        if depth in self.instr_path.keys():
+            self.instr_path.pop(depth)
 
     def validate_instr(self, instr):
         opcode = instr.opcode

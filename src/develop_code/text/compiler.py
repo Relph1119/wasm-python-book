@@ -54,7 +54,7 @@ def compile_script_file(file_name):
     except Exception as e:
         err = e
         return None, err
-    return compile_script(input), None
+    return compile_script(input)
 
 
 def compile_script(input):

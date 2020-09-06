@@ -49,6 +49,7 @@ class CodeValidator:
         self.mv = mv
         self.code_idx = code_idx
         self.local_count = None
+        self.max_opds = 0
         # depth -> opname
         self.instr_path = instr_path
 
@@ -65,6 +66,9 @@ class CodeValidator:
     def push_opd(self, vt):
         """单个操作数的压入操作数栈操作"""
         self.opds.append(vt)
+        n = len(self.opds)
+        if n > self.max_opds:
+            self.max_opds = n
 
     def pop_opd(self):
         """单个操作数的弹出操作数栈操作：从栈顶弹出一个任意类型的操作数"""
@@ -172,8 +176,8 @@ class CodeValidator:
         for instr in expr:
             self.instr_path[depth] = instr.get_opname()
             self.validate_instr(instr)
-
-        self.instr_path.pop(depth)
+        if depth in self.instr_path.keys():
+            self.instr_path.pop(depth)
 
     def validate_instr(self, instr):
         opcode = instr.opcode

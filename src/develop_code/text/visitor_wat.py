@@ -7,6 +7,7 @@
 @project: wasm-python-book
 @desc:
 """
+import contextlib
 import math
 
 from binary.instruction import BrTableArgs, MemArg
@@ -408,14 +409,15 @@ class WatVisitor(WASTVisitor, ErrorReporter):
     def visitFoldedInstr(self, ctx: WASTParser.FoldedInstrContext):
         instrs = []
         for floded_instr in ctx.foldedInstr():
-            instrs.append(floded_instr.accept(self))
+            instr = floded_instr.accept(self)
+            if isinstance(instr, list):
+                instrs.extend(instr)
 
         op = ctx.op
         if op is not None:
-            try:
-                self.code_builder.enter_block()
-            except Exception:
-                self.code_builder.exit_block()
+            self.code_builder.enter_block()
+            with contextlib.ExitStack() as stack:
+                stack.callback(self.code_builder.exit_block)
 
             label = ctx.label
             if label is not None:
@@ -434,7 +436,8 @@ class WatVisitor(WASTVisitor, ErrorReporter):
 
     def visitBlockInstr(self, ctx: WASTParser.BlockInstrContext):
         self.code_builder.enter_block()
-        self.code_builder.exit_block()
+        with contextlib.ExitStack() as stack:
+            stack.callback(self.code_builder.exit_block)
 
         label = ctx.label
         if label is not None:
@@ -516,10 +519,10 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         mem_arg = MemArg()
         offset = ctx.offset
         if offset is not None:
-            mem_arg.offset = parse_u32(offset.text)
+            mem_arg.offset = parse_u32(offset.getText())
         align = ctx.align
         if align is not None:
-            align_val = parse_u32(align.text)
+            align_val = parse_u32(align.getText())
             if align_val == 1:
                 mem_arg.align = 0
             elif align_val == 2:

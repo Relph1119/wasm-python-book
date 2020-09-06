@@ -13,6 +13,7 @@ from binary.opcodes import *
 from binary.reader import decode
 from interpreter import int32, int64, float32, float64
 from spectest.native import new_spectest_instance
+from spectest.wasm_impl import WasmImpl
 from text.wast_script import *
 
 
@@ -21,6 +22,8 @@ class WastTester:
         if instances is None:
             instances = dict()
         self.script = script
+        if wasm_impl is None:
+            wasm_impl = WasmImpl()
         self.wasm_impl = wasm_impl
         self.instances = instances
         self.instance = None
@@ -38,6 +41,8 @@ class WastTester:
             elif isinstance(cmd, Register):
                 self.instances[cmd.module_name] = self.instance
             elif isinstance(cmd, Action):
+                err = self.run_action(cmd)
+            elif isinstance(cmd, Assertion):
                 err = self.run_assertion(cmd)
             elif isinstance(cmd, Meta):
                 err = Exception("TODO")
@@ -49,12 +54,13 @@ class WastTester:
             return err
 
     def instantiate(self, module):
-        self.instance, err = self.wasm_impl.instantiate(module, self.instances)
+        self.instance, err = self.wasm_impl.instantiate(module.module, self.instances)
         if err is None:
             if module.name != "":
                 self.instances[module.name] = self.instance
         else:
-            err = "line: %d, %s" % (module.line, err.Error())
+            raise err
+            err = "line: %d, %s" % (module.line, err.error)
         return err
 
     def instantiate_bin(self, module):
@@ -115,7 +121,7 @@ class WastTester:
 
 
 def assert_return(assertion, results, err):
-    expected_vals = get_consts(assertion.reuslt)
+    expected_vals = get_consts(assertion.result)
     if err is not None:
         return "line: {}, expected return: {}, got: {}".format(assertion.line,
                                                                expected_vals,
@@ -161,7 +167,7 @@ def assert_error(assertion, err):
 
 def get_consts(expr):
     vals = [None] * len(expr)
-    for i, instr in enumerate(vals):
+    for i, instr in enumerate(expr):
         opcode = instr.opcode
         if opcode == I32Const:
             vals[i] = int32(instr.args)

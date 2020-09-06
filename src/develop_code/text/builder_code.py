@@ -34,7 +34,7 @@ class CodeBuilder:
             return err
 
         n = len(self.locals)
-        if n == 0 or self.locals[n - 1].type == val_type:
+        if n == 0 or self.locals[n - 1].type != val_type:
             self.locals.append(Locals(1, val_type))
         else:
             self.locals[n - 1].n += 1

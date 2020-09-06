@@ -185,20 +185,21 @@ class VM(OperandStack, ControlStack, module.Module):
             args = []
         m = self.get_member(name)
         if m is not None:
-            return m.call(args)
+            return m.call(args), None
+        return None, Exception("function not found: " + name)
 
     def get_global_val(self, name):
         m = self.get_member(name)
         if m is not None:
             return m.get(), None
-        return None, "global not found: " + name
+        return None, Exception("global not found: " + name)
 
     def set_global_var(self, name, val):
         m = self.get_member(name)
         if m is not None:
             m.set(val)
             return None
-        return "global not found: " + name
+        return Exception("global not found: " + name)
 
 
 def new(m, mm):
