@@ -403,17 +403,38 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         return ctx.foldedInstr().accept(self)
 
     def visitFoldedInstr(self, ctx: WASTParser.FoldedInstrContext):
-        instrs = []
-        for floded_instr in ctx.foldedInstr():
-            instr = floded_instr.accept(self)
-            if isinstance(instr, list):
-                instrs.extend(instr)
+        try:
+            instrs = []
+            for floded_instr in ctx.foldedInstr():
+                instr = floded_instr.accept(self)
+                if isinstance(instr, list):
+                    instrs.extend(instr)
 
-        op = ctx.op
-        if op is not None:
+            op = ctx.op
+            if op is not None:
+                self.code_builder.enter_block()
+                label = ctx.label
+                if label is not None:
+                    self.code_builder.define_label(label.text)
+
+                op = ctx.op.text
+                rt = ctx.blockType().accept(self)
+                expr1 = ctx.expr(0).accept(self)
+                expr2 = get_expr(ctx.expr(1), self)
+                instr = new_block_instr(op, rt, expr1, expr2)
+            else:
+                instr = ctx.plainInstr().accept(self)
+
+            instrs.append(instr)
+            return instrs
+        finally:
+            op = ctx.op
+            if op is not None:
+                self.code_builder.exit_block()
+
+    def visitBlockInstr(self, ctx: WASTParser.BlockInstrContext):
+        try:
             self.code_builder.enter_block()
-            with contextlib.ExitStack() as stack:
-                stack.callback(self.code_builder.exit_block)
 
             label = ctx.label
             if label is not None:
@@ -423,27 +444,9 @@ class WatVisitor(WASTVisitor, ErrorReporter):
             rt = ctx.blockType().accept(self)
             expr1 = ctx.expr(0).accept(self)
             expr2 = get_expr(ctx.expr(1), self)
-            instr = new_block_instr(op, rt, expr1, expr2)
-        else:
-            instr = ctx.plainInstr().accept(self)
-
-        instrs.append(instr)
-        return instrs
-
-    def visitBlockInstr(self, ctx: WASTParser.BlockInstrContext):
-        self.code_builder.enter_block()
-        with contextlib.ExitStack() as stack:
-            stack.callback(self.code_builder.exit_block)
-
-        label = ctx.label
-        if label is not None:
-            self.code_builder.define_label(label.text)
-
-        op = ctx.op.text
-        rt = ctx.blockType().accept(self)
-        expr1 = ctx.expr(0).accept(self)
-        expr2 = get_expr(ctx.expr(1), self)
-        return new_block_instr(op, rt, expr1, expr2)
+            return new_block_instr(op, rt, expr1, expr2)
+        finally:
+            self.code_builder.exit_block()
 
     def visitPlainInstr(self, ctx: WASTParser.PlainInstrContext):
         if ctx.constInstr() is not None:

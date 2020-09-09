@@ -227,7 +227,7 @@ class CodeValidator:
             m = int(br_table_args.default)
             if len(self.ctrls) < m:
                 self.error("unknown label")
-            for n in range(len(br_table_args.labels)):
+            for n in br_table_args.labels:
                 if len(self.ctrls) < int(n):
                     self.error("unknown label")
                 t1 = self.get_ctrl(int(n)).label_types()
@@ -252,7 +252,7 @@ class CodeValidator:
         elif opcode == CallIndirect:
             if self.mv.get_table_count() == 0:
                 self.error("unknown function")
-            ft_idx = instr.agrs
+            ft_idx = instr.args
             if int(ft_idx) >= self.mv.get_type_count():
                 self.error("unknown type")
             ft = self.mv.module.type_sec[ft_idx]

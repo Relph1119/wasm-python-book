@@ -56,7 +56,11 @@ class WastTester:
             if module.name != "":
                 self.instances[module.name] = self.instance
         else:
-            err = "line: %d, %s" % (module.line, err.error)
+            if hasattr(err, "error"):
+                err = "line: %d, %s" % (module.line, err.error)
+            else:
+                err = "line: %d, %s" % (module.line, err.args[0])
+
         return err
 
     def instantiate_bin(self, module):
