@@ -53,7 +53,7 @@ class ModuleValidator:
                 if len(self.imported_tables) > 0:
                     raise Exception("multiple tables")
                 self.imported_tables.append(imp)
-                err = validate_table_type(imp)
+                err = validate_table_type(imp.desc.table.limits)
                 if err != "":
                     raise Exception("import[%d]: %s" % (i, err))
             elif tag == ImportTagMem:
