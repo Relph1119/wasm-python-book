@@ -16,6 +16,7 @@ from binary.module import Import, ImportDesc, ImportTagFunc, ImportTagTable, Imp
 from binary.opcodes import *
 from binary.types import Limits, ValTypeI32, ValTypeI64, ValTypeF32, ValTypeF64, BlockTypeI32, BlockTypeI64, \
     BlockTypeF32, BlockTypeF64, FuncType, BlockTypeEmpty, MutConst, MutVar, GlobalType, TableType
+from interpreter import uint32
 from text.builder_code import new_code_builder
 from text.builder_instr import new_i32_const0, new_block_instr, new_instruction
 from text.builder_module import new_module_builder
@@ -459,7 +460,7 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         if opcode in [Br, BrIf]:
             _var = ctx.variable(0)
             idx, err = self.code_builder.get_br_label_idx(_var.getText())
-            instr.args = idx
+            instr.args = uint32(idx)
             self.report_err(err, ctx.variable(0))
         elif opcode == BrTable:
             labels = []
@@ -473,25 +474,25 @@ class WatVisitor(WASTVisitor, ErrorReporter):
         elif opcode == Call:
             _var = ctx.variable(0)
             idx, err = self.module_builder.get_func_idx(_var.getText())
-            instr.args = idx
+            instr.args = uint32(idx)
             self.report_err(err, _var)
         elif opcode == CallIndirect:
             ft_idx = ctx.typeUse().accept(self)
-            instr.args = ft_idx
+            instr.args = uint32(ft_idx)
             # TODO
 
         if LocalGet <= opcode <= LocalTee:
             _var = ctx.variable(0)
             if self.code_builder is not None:
                 idx, err = self.code_builder.get_local_idx(_var.getText())
-                instr.args = idx
+                instr.args = uint32(idx)
                 self.report_err(err, _var)
             else:
                 instr.args = parse_u32(_var.getText())
         elif GlobalGet <= opcode <= GlobalSet:
             _var = ctx.variable(0)
             idx, err = self.module_builder.get_global_idx(_var.getText())
-            instr.args = idx
+            instr.args = uint32(idx)
             self.report_err(err, _var)
         elif I32Load <= opcode <= I64Store32:
             instr.args = ctx.memArg().accept(self)

@@ -67,8 +67,8 @@ def test_wast(file_name):
 
 def test_wast_files(path):
     wast_files = glob.glob(os.path.join(path, "*.wast"))
-    for files in wast_files:
-        test_wast(files)
+    for file in wast_files:
+        test_wast(file)
 
 
 def check_wasm(file_name):

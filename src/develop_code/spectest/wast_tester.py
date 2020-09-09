@@ -48,6 +48,8 @@ class WastTester:
             else:
                 err = Exception("unreachable")
         if err is not None:
+            # TODO
+            raise err
             return err
 
     def instantiate(self, module):
@@ -61,7 +63,7 @@ class WastTester:
             else:
                 err = "line: %d, %s" % (module.line, err.args[0])
 
-        return err
+        return Exception(err)
 
     def instantiate_bin(self, module):
         tmp, err = self.wasm_impl.instantiate_bin(module.data, self.instances)
@@ -94,7 +96,7 @@ class WastTester:
             elif isinstance(module, QuotedModule):
                 pass
         elif kind == AssertInvalid:
-            module = assertion.module
+            module = assertion.module.module
             err = self.wasm_impl.validate(module)
             return assert_error(assertion, err)
         elif kind == AssertUnlinkable:
@@ -160,6 +162,8 @@ def assert_trap(assertion, results, err):
 
 def assert_error(assertion, err):
     if err is None or err.args[0].find(assertion.failure) < 0:
+        # TODO
+        raise err
         return "line: {}, expected: {}, got: {}".format(assertion.line,
                                                         assertion.failure,
                                                         err)

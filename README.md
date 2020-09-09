@@ -141,3 +141,6 @@ wat2wasm xxx.wat
 &emsp;&emsp;由于之前有[JVMByPython](https://github.com/Relph1119/JVMByPython)项目的代码实现基础，目前已完成的功能有Wasm的二进制格式解码、指令集、操作数栈和虚拟机、内存及内存指令、函数调用（本地方法和外部方法调用）、实例化模块、模块错误处理和验证等。  
 &emsp;&emsp;另：挺感谢作者在我实现代码期间给予的指导和帮助，目前该项目还需要完成spec的wast格式解析和测试、AOT和JIT的实现等。
 
+## Spec Test
+未测试通过的文件：
+- br_table.wast：运行时间太长

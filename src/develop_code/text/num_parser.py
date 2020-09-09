@@ -63,8 +63,11 @@ def parse_float(s: str):
     s = s.replace("_", "")
     if s.find("0x") >= 0 > s.find('P') and s.find('p') < 0:
         s += "p0"
-    f = float.fromhex(s)
-    return f
+        return float.fromhex(s)
+    elif s.find('P') > 0 or s.find('p') > 0:
+        return float.fromhex(s)
+    else:
+        return float(s)
 
 
 def parse_nan32(s: str):
