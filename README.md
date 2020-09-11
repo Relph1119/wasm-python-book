@@ -144,6 +144,7 @@ wat2wasm xxx.wat
 ## Spec Test
 未测试通过的文件：
 - br_table.wast：运行时间太长
+- const.wast：float的精度问题超过小数点后面7位就不精确了
 
 已测试通过的文件：
 - address.wast
@@ -154,4 +155,5 @@ wat2wasm xxx.wat
 - br.wast
 - br_if.wast
 - call.wast
+- comments.wast
 - table.wast

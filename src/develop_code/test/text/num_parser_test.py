@@ -11,7 +11,7 @@ import math
 import unittest
 
 from interpreter import uint32, uint64, float32, float64
-from text.num_parser import parse_f32
+from text.num_parser import parse_f32, parse_f64
 
 
 class TestNumParserFunc(unittest.TestCase):
@@ -25,7 +25,11 @@ class TestNumParserFunc(unittest.TestCase):
         self.assertEqual(uint64(0x7ff0000000000000), float64(str(math.inf)))
         self.assertEqual(uint64(0xfff0000000000000), float64('-inf'))
 
-    def test_parse_float(self):
-        f1 = parse_f32("+0x1.00000100000000001p-50")
-        f2 = parse_f32("+0x1.000002p-50")
+    def test_parse_float32(self):
+        self.assertEqual(parse_f32("+0x1.00000100000000001p-50"), parse_f32("+0x1.000001p-50"))
+        self.assertEqual(parse_f32("+0x1.000001fffffffffffp-50"), parse_f32("+0x1.000001fp-50"))
+
+    def test_parse_float64(self):
+        f1 = parse_f64("-0x1.fffffffffffff7ffffffp1023")
+        f2 = parse_f64("-0x1.fffffffffffffp1023")
         self.assertEqual(f1, f2)

@@ -74,7 +74,7 @@ class BrTableArgs:
 class MemArg:
     """内存指令参数"""
 
-    def __init__(self, align=0, offset=None):
+    def __init__(self, align=0, offset=0):
         # 对齐提示
         self.align = align
         # 内存偏移量

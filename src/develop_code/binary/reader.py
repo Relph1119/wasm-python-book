@@ -21,6 +21,7 @@ from binary.opcodes import *
 from binary.opnames import opnames
 from binary.types import ValTypeI32, ValTypeI64, ValTypeF32, ValTypeF64, FuncType, FtTag, TableType, FuncRef, \
     GlobalType, MutConst, MutVar, Limits, BlockTypeI32, BlockTypeI64, BlockTypeF32, BlockTypeF64, BlockTypeEmpty
+from interpreter import uint8
 
 
 def decode_file(file_name: str):
@@ -238,7 +239,7 @@ class WasmReader:
         elif tag == ImportTagGlobal:
             desc.global_type = self.read_global_type()
         else:
-            raise Exception("invalid import desc tag: %d" % tag)
+            raise Exception("malformed import kind: %d" % tag)
         return desc
 
     def read_table_sec(self):
@@ -315,7 +316,8 @@ class WasmReader:
 
     def read_locals_vec(self):
         vec = []
-        for _ in range(self.read_var_u32()):
+        n = self.read_var_u32()
+        for _ in range(n):
             vec.append(self.read_locals())
         return vec
 
@@ -449,7 +451,7 @@ class WasmReader:
         elif opcode == F64Const:
             return self.read_f64()
         elif opcode == TruncSat:
-            return self.read_byte()
+            return uint8(self.read_var_u32())
         else:
             if I32Load <= opcode <= I64Store32:
                 return self.read_mem_arg()

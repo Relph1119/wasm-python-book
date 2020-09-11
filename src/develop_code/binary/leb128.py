@@ -9,6 +9,7 @@
 Wasm二进制格式使用LEB1128来编码列表长度和索引等整数值
 """
 from binary.errors import ErrIntTooLong, ErrIntTooLarge, ErrUnexpectedEnd
+from interpreter import int8, uint64
 
 
 def encode_var_uint(val, size):
@@ -36,9 +37,9 @@ def decode_var_uint(data, size: int):
         if i == int(size / 7):
             if b & 0x80 != 0:
                 raise ErrIntTooLong
-            if b >> (size - i * 7) > 0:
+            if (b >> (size - i * 7)) > 0:
                 raise ErrIntTooLarge
-        result |= (b & 0x7f) << (i * 7)
+        result |= (uint64(b) & 0x7f) << (i * 7)
         if b & 0x80 == 0:
             return result, i + 1
     raise ErrUnexpectedEnd
@@ -72,7 +73,7 @@ def decode_var_int(data, size):
             if b & 0x80 != 0:
                 raise ErrIntTooLong
             if b & 0x40 == 0 and b >> (size - i * 7 - 1) != 0 or \
-                    b & 0x40 != 0 and int(b | 0x80) >> (size - i * 7 - 1) != -1:
+                    b & 0x40 != 0 and int8(b | 0x80) >> (size - i * 7 - 1) != -1:
                 raise ErrIntTooLarge
         result |= (b & 0x7f) << (i * 7)
         if b & 0x80 == 0:

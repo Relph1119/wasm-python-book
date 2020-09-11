@@ -47,23 +47,24 @@ class WastTester:
                 err = Exception("TODO")
             else:
                 err = Exception("unreachable")
-        if err is not None:
-            # TODO
-            raise err
-            return err
+
+            if err is not None:
+                # TODO
+                raise err
+                return err
 
     def instantiate(self, module):
         self.instance, err = self.wasm_impl.instantiate(module.module, self.instances)
         if err is None:
             if module.name != "":
                 self.instances[module.name] = self.instance
+            return None
         else:
             if hasattr(err, "error"):
                 err = "line: %d, %s" % (module.line, err.error)
             else:
                 err = "line: %d, %s" % (module.line, err.args[0])
-
-        return Exception(err)
+            return Exception(err)
 
     def instantiate_bin(self, module):
         tmp, err = self.wasm_impl.instantiate_bin(module.data, self.instances)
@@ -171,7 +172,10 @@ def assert_error(assertion, err):
 
 
 def get_consts(expr):
-    vals = [None] * len(expr)
+    if len(expr) == 0:
+        vals = []
+    else:
+        vals = [None] * len(expr)
     for i, instr in enumerate(expr):
         opcode = instr.opcode
         if opcode == I32Const:

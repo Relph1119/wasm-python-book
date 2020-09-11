@@ -56,7 +56,7 @@ def parse_f32(s: str):
 def parse_f64(s: str):
     if s.find("nan") >= 0:
         return parse_nan64(s)
-    return parse_float(s)
+    return float64(parse_float(s))
 
 
 def parse_float(s: str):

@@ -7,6 +7,9 @@
 @project: wasm-python-book
 @desc: 参数和返回值的包装/解包
 """
+import math
+import struct
+
 from ch11.binary.types import ValTypeI32, ValTypeI64, ValTypeF32, ValTypeF64
 from ch11.interpreter import int32, int64, float32, float64, uint64
 
@@ -17,9 +20,17 @@ def wrap_u64(vt, val):
     elif vt == ValTypeI64:
         return int64(val)
     elif vt == ValTypeF32:
-        return float32(val)
+        cov_val = struct.unpack('>f', struct.pack('>l', int64(val)))[0]
+        if math.isnan(cov_val):
+            return float32(val)
+        else:
+            return float32(cov_val)
     elif vt == ValTypeF64:
-        return float64(val)
+        cov_val = struct.unpack('>d', struct.pack('>q', int64(val)))[0]
+        if math.isnan(cov_val):
+            return float64(val)
+        else:
+            return float64(cov_val)
     else:
         raise Exception("unreachable")
 

@@ -35,6 +35,12 @@ class int64(int):
         return super().__new__(cls, val)
 
 
+class uint8(int):
+    def __new__(cls, val):
+        val = ctypes.c_uint8(val).value
+        return super().__new__(cls, val)
+
+
 class uint16(int):
     def __new__(cls, val):
         val = ctypes.c_uint16(val).value
