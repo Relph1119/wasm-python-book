@@ -251,7 +251,7 @@ class CodeValidator:
             self.push_opds(ft.result_types)
         elif opcode == CallIndirect:
             if self.mv.get_table_count() == 0:
-                self.error("unknown function")
+                self.error("unknown table")
             ft_idx = instr.args
             if int(ft_idx) >= self.mv.get_type_count():
                 self.error("unknown type")

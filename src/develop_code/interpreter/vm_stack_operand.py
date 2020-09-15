@@ -75,7 +75,7 @@ class OperandStack:
 
     def pop_f32(self):
         val = self.pop_numeric()
-        val = struct.unpack('>f', struct.pack('>l', val))[0]
+        val = struct.unpack('>f', struct.pack('>l', int64(val)))[0]
         return float32(val)
 
     def push_f64(self, val):

@@ -146,6 +146,7 @@ wat2wasm xxx.wat
 - br_table.wast：运行时间太长
 - const.wast：float的精度问题超过小数点后面7位就不精确了
 
+
 已测试通过的文件：
 - address.wast
 - align.wast
@@ -157,3 +158,4 @@ wat2wasm xxx.wat
 - call.wast
 - comments.wast
 - table.wast
+- call_indirect.wast

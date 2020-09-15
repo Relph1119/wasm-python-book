@@ -15,12 +15,12 @@ from decimal import Decimal
 from interpreter import int32, int64, float32, float64, uint32, uint64, int8, int16
 from interpreter.errors import ErrIntOverflow, ErrConvertToInt
 
-__MaxInt32 = 1 << 31 - 1
+__MaxInt32 = (1 << 31) - 1
 __MinInt32 = -1 << 31
-__MaxInt64 = 1 << 63 - 1
+__MaxInt64 = (1 << 63) - 1
 __MinInt64 = -1 << 63
-__MaxUint32 = 1 << 32 - 1
-__MaxUint64 = 1 << 64 - 1
+__MaxUint32 = (1 << 32) - 1
+__MaxUint64 = (1 << 64) - 1
 
 
 def i32_const(vm, args):
@@ -677,11 +677,14 @@ def i32_wrap_i64(vm, _):
 
 
 def i32_trunc_f32s(vm, _):
-    f = math.trunc(vm.pop_f32())
+    val = float64(vm.pop_f32())
+    if math.isinf(val):
+        raise ErrIntOverflow
+    if math.isnan(val):
+        raise ErrConvertToInt
+    f = math.trunc(val)
     if f > __MaxInt32 or f < __MinInt32:
         raise ErrIntOverflow
-    if math.isnan(f):
-        raise ErrConvertToInt
     vm.push_u32(int32(f))
 
 

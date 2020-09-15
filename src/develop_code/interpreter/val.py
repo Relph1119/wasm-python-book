@@ -41,8 +41,10 @@ def unwrap_u64(vt, val):
     elif vt == ValTypeI64:
         return uint64(val)
     elif vt == ValTypeF32:
+        val = struct.unpack('>l', struct.pack('>f', val))[0]
         return uint64(val)
     elif vt == ValTypeF64:
+        val = struct.unpack('>q', struct.pack('>d', val))[0]
         return uint64(val)
     else:
         raise Exception("unreachable")

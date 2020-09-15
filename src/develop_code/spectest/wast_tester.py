@@ -50,7 +50,7 @@ class WastTester:
 
             if err is not None:
                 # TODO
-                raise err
+                print(err)
                 return err
 
     def instantiate(self, module):

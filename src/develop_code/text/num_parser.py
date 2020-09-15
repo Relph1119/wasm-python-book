@@ -8,6 +8,7 @@
 @desc:
 """
 import math
+import struct
 
 from interpreter import uint32, int32, int64, float32, float64
 
@@ -67,12 +68,12 @@ def parse_float(s: str):
     elif s.find('P') > 0 or s.find('p') > 0:
         return float.fromhex(s)
     else:
-        return float(s)
+        return 0.0 if float(s) == 0 else float(s)
 
 
 def parse_nan32(s: str):
     s = s.replace("_", "")
-    f = float32('nan')
+    f = float32(math.nan)
     if s[0] == '-':
         f = -f
         s = s[1:]
@@ -81,8 +82,8 @@ def parse_nan32(s: str):
 
     if s.startswith("nan:0x"):
         payload = int(s[6:], 16)
-        bits = f & 0xFFBFFFFF
-        f = float32(bits | payload)
+        bits = struct.unpack('>l', struct.pack('>f', f))[0] & 0xFFBFFFFF
+        f = float32(struct.unpack('>f', struct.pack('>l', int64(bits | uint32(payload))))[0])
     return f
 
 
