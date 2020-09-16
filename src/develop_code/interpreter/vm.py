@@ -8,7 +8,7 @@
 @desc:
 """
 from binary.module import Module, ImportTagFunc, ImportTagTable, ImportTagMem, ImportTagGlobal, ExportTagFunc, \
-    ExportTagTable, ExportTagMem, ExportTagGlobal
+    ExportTagTable, ExportTagMem, ExportTagGlobal, PageSize
 from binary.opcodes import Call
 from instance import module
 from interpreter.instructions import instr_table
@@ -74,20 +74,43 @@ class VM(OperandStack, ControlStack, module.Module):
         if not type_matched:
             raise Exception("incompatible import type: %s.%s" % (imp.module, imp.name))
 
-    def init_mem(self):
-        """
-        内存初始化
-        Wasm模块可以导入或者定义一块内存，还有一个数据段专门用来存放内存初始化数据
-        """
-        # 如果模块定义了内存，就先创建内存实例并分配必要的内存页
-        if len(self.module.mem_sec) > 0:
-            self.memory = Memory(self.module.mem_sec[0])
+    def calc_elem_offsets(self):
+        offsets = []
+        for elem in self.module.elem_sec:
+            self.exec_const_expr(elem.offset)
+            offset = self.pop_u32()
+            data_len = len(elem.init)
+            upper_bound = self.table.type.limits.min
+            if offset > 0 or data_len > 0:
+                if offset + data_len > upper_bound:
+                    raise Exception("elements segment does not fit")
+            offsets.append(offset)
 
+        return offsets
+
+    def calc_data_offsets(self):
+        offsets = []
         for data in self.module.data_sec:
             self.exec_const_expr(data.offset)
+            offset = self.pop_u32()
+            data_len = len(data.init)
+            upper_bound = self.memory.type.min * PageSize
+            if offset > 0 or data_len > 0:
+                if offset + data_len > upper_bound:
+                    raise Exception("data segment does not fit")
+            offsets.append(offset)
+        return offsets
 
-            # 指令执行完毕后，留在操作数栈顶的就是内存起始地址
-            self.memory.write(self.pop_u64(), data.init)
+    def init_table(self, offsets):
+        for i, elem in enumerate(self.module.elem_sec):
+            for j, f_idx in enumerate(elem.init):
+                offset = offsets[i] + j
+                f = self.funcs[f_idx]
+                self.table.set_elem(offset, f)
+
+    def init_memory(self, offsets):
+        for i, data in enumerate(self.module.data_sec):
+            self.memory.write(offsets[i], data.init)
 
     def init_globals(self):
         for global_var in self.module.global_sec:
@@ -100,15 +123,21 @@ class VM(OperandStack, ControlStack, module.Module):
             code = self.module.code_sec[i]
             self.funcs.append(new_internal_func(self, ft, code))
 
-    def init_table(self):
+    def init_table_and_mem(self):
         if len(self.module.table_sec) > 0:
             self.table = Table(self.module.table_sec[0])
-        for elem in self.module.elem_sec:
-            for instr in elem.offset:
-                self.exec_instr(instr)
-            offset = self.pop_u32()
-            for i, func_idx in enumerate(elem.init):
-                self.table.set_elem(offset + i, self.funcs[func_idx])
+
+        # 内存初始化
+        # Wasm模块可以导入或者定义一块内存，还有一个数据段专门用来存放内存初始化数据
+        # 如果模块定义了内存，就先创建内存实例并分配必要的内存页
+        if len(self.module.mem_sec) > 0:
+            self.memory = Memory(self.module.mem_sec[0])
+
+        elem_offsets = self.calc_elem_offsets()
+        data_offsets = self.calc_data_offsets()
+
+        self.init_table(elem_offsets)
+        self.init_memory(data_offsets)
 
     def exec_const_expr(self, expr):
         for instr in expr:
@@ -218,8 +247,7 @@ def new_vm(m, mm):
     vm = VM(m)
     vm.link_imports(mm)
     vm.init_funcs()
-    vm.init_table()
-    vm.init_mem()
+    vm.init_table_and_mem()
     vm.init_globals()
     vm.exec_start_func()
     return vm

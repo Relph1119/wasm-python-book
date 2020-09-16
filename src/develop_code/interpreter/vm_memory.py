@@ -9,10 +9,11 @@
 """
 from binary.module import PageSize, MaxPageCount
 from binary.types import MemType
+from instance import module
 from interpreter.errors import ErrMemOutOfBounds
 
 
-class Memory:
+class Memory(module.Memory):
     def __init__(self, mem_type=None):
         self.type = mem_type
         # 内存初始页分配

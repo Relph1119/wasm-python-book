@@ -158,4 +158,6 @@ wat2wasm xxx.wat
 - call.wast
 - call_indirect.wast
 - comments.wast
+- custom.wast
+- data.wast
 - table.wast
