@@ -9,7 +9,7 @@
 """
 
 ActionInvoke = 1
-ActionGet = 1
+ActionGet = 2
 
 AssertReturn = 1
 AssertTrap = 2

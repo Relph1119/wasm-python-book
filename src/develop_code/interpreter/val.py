@@ -20,13 +20,19 @@ def wrap_u64(vt, val):
     elif vt == ValTypeI64:
         return int64(val)
     elif vt == ValTypeF32:
-        cov_val = struct.unpack('>f', struct.pack('>l', int64(val)))[0]
+        try:
+            cov_val = struct.unpack('>f', struct.pack('>l', int64(val)))[0]
+        except struct.error:
+            cov_val = struct.unpack('>f', struct.pack('>L', int64(val)))[0]
         if math.isnan(cov_val):
             return float32(val)
         else:
             return float32(cov_val)
     elif vt == ValTypeF64:
-        cov_val = struct.unpack('>d', struct.pack('>q', int64(val)))[0]
+        try:
+            cov_val = struct.unpack('>d', struct.pack('>q', int64(val)))[0]
+        except struct.error:
+            cov_val = struct.unpack('>d', struct.pack('>Q', int64(val)))[0]
         if math.isnan(cov_val):
             return float64(val)
         else:

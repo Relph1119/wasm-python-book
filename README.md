@@ -160,4 +160,8 @@ wat2wasm xxx.wat
 - comments.wast
 - custom.wast
 - data.wast
+- elem.wast
+- endianness.wast
+- exports.wast
+
 - table.wast

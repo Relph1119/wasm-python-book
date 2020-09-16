@@ -8,7 +8,7 @@
 @desc: 内存指令
 """
 
-from interpreter import int32, int8, int16, uint32, int64, uint64, uint16
+from interpreter import int32, int8, int16, uint32, int64, uint64, uint16, uint8
 
 
 def memory_size(vm, _):
@@ -142,7 +142,7 @@ def f64_store(vm, mem_arg):
 
 def i32_store_8(vm, mem_arg):
     val = vm.pop_u32()
-    write_u8(vm, mem_arg, val)
+    write_u8(vm, mem_arg, uint8(val))
 
 
 def i32_store_16(vm, mem_arg):
@@ -152,7 +152,7 @@ def i32_store_16(vm, mem_arg):
 
 def i64_store_8(vm, mem_arg):
     val = vm.pop_u64()
-    write_u8(vm, mem_arg, val)
+    write_u8(vm, mem_arg, uint8(val))
 
 
 def i64_store_16(vm, mem_arg):

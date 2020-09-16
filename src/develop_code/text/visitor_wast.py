@@ -78,7 +78,10 @@ class WastVisitor(WatVisitor, WASTVisitor):
         a.module_name = get_text(ctx.NAME())
         a.item_name = get_str(ctx.STRING())
         if a.kind == ActionInvoke:
-            a.expr = ctx.expr().accept(self)
+            if ctx.expr() is not None:
+                a.expr = ctx.expr().accept(self)
+            else:
+                a.expr = []
 
         return a
 
