@@ -51,24 +51,28 @@ def parse_int(s, bit_size):
 def parse_f32(s: str):
     if s.find("nan") >= 0:
         return parse_nan32(s)
-    return float32(parse_float(s))
+    return parse_float(s, 32)
 
 
 def parse_f64(s: str):
     if s.find("nan") >= 0:
         return parse_nan64(s)
-    return float64(parse_float(s))
+    return parse_float(s, 64)
 
 
-def parse_float(s: str):
+def parse_float(s: str, bit_size):
     s = s.replace("_", "")
     if s.find("0x") >= 0 > s.find('P') and s.find('p') < 0:
         s += "p0"
-        return float.fromhex(s)
+        f = float.fromhex(s)
     elif s.find('P') > 0 or s.find('p') > 0:
-        return float.fromhex(s)
+        f = float.fromhex(s)
     else:
-        return 0.0 if float(s) == 0 else float(s)
+        f = 0.0 if float(s) == 0 else float(s)
+    if bit_size == 32:
+        return float32(f)
+    else:
+        return float64(f)
 
 
 def parse_nan32(s: str):
@@ -83,13 +87,16 @@ def parse_nan32(s: str):
     if s.startswith("nan:0x"):
         payload = int(s[6:], 16)
         bits = struct.unpack('>l', struct.pack('>f', f))[0] & 0xFFBFFFFF
-        f = float32(struct.unpack('>f', struct.pack('>l', int64(bits | uint32(payload))))[0])
+        try:
+            f = float32(struct.unpack('>f', struct.pack('>l', int64(bits | uint32(payload))))[0])
+        except struct.error:
+            f = float32(math.nan)
     return f
 
 
 def parse_nan64(s: str):
     s = s.replace("_", "")
-    f = float64('nan')
+    f = float64(math.nan)
     if s[0] == '-':
         f = -f
         s = s[1:]
@@ -97,9 +104,15 @@ def parse_nan64(s: str):
         s = s[1:]
     if s.startswith("nan:0x"):
         payload = int(s[6:], 16)
-        bits = f & 0xFFF7FFFFFFFFFFFE
-        f = float32(bits | payload)
+        bits = struct.unpack('>q', struct.pack('>d', f))[0] & 0xFFF7FFFFFFFFFFFE
+        try:
+            f = float64(struct.unpack('>d', struct.pack('>q', int64(bits | payload)))[0])
+        except struct.error:
+            f = float64(math.nan)
     else:
-        bits = f & 0xFFF7FFFFFFFFFFFE
-        f = float32(bits)
+        bits = struct.unpack('>q', struct.pack('>d', f))[0] & 0xFFFFFFFFFFFFFFFE
+        try:
+            f = float64(struct.unpack('>d', struct.pack('>q', int64(bits)))[0])
+        except struct.error:
+            f = float64(math.nan)
     return f

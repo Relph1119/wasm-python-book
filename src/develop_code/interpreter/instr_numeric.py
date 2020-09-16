@@ -689,29 +689,38 @@ def i32_trunc_f32s(vm, _):
 
 
 def i32_trunc_f32u(vm, _):
-    f = math.trunc(vm.pop_f32())
+    val = float64(vm.pop_f32())
+    if math.isinf(val):
+        raise ErrIntOverflow
+    if math.isnan(val):
+        raise ErrConvertToInt
+    f = math.trunc(val)
     if f > __MaxUint32 or f < 0:
         raise ErrIntOverflow
-    if math.isnan(f):
-        raise ErrConvertToInt
     vm.push_u32(uint32(f))
 
 
 def i32_trunc_f64s(vm, _):
-    f = math.trunc(vm.pop_f64())
+    val = vm.pop_f64()
+    if math.isinf(val):
+        raise ErrIntOverflow
+    if math.isnan(val):
+        raise ErrConvertToInt
+    f = math.trunc(val)
     if f > __MaxInt32 or f < __MinInt32:
         raise ErrIntOverflow
-    if math.isnan(f):
-        raise ErrConvertToInt
     vm.push_s32(int32(f))
 
 
 def i32_trunc_f64u(vm, _):
-    f = math.trunc(vm.pop_f64())
+    val = vm.pop_f64()
+    if math.isinf(val):
+        raise ErrIntOverflow
+    if math.isnan(val):
+        raise ErrConvertToInt
+    f = math.trunc(val)
     if f > __MaxUint32 or f < 0:
         raise ErrIntOverflow
-    if math.isnan(f):
-        raise ErrConvertToInt
     vm.push_u32(uint32(f))
 
 
@@ -724,38 +733,50 @@ def i64_extend_i32u(vm, _):
 
 
 def i64_trunc_f32s(vm, _):
-    f = math.trunc(vm.pop_f32())
+    val = vm.pop_f32()
+    if math.isinf(val):
+        raise ErrIntOverflow
+    if math.isnan(val):
+        raise ErrConvertToInt
+    f = math.trunc(val)
     if f >= __MaxInt64 or f < __MinInt64:
         raise ErrIntOverflow
-    if math.isnan(f):
-        raise ErrConvertToInt
     vm.push_s64(int64(f))
 
 
 def i64_trunc_f32u(vm, _):
-    f = math.trunc(vm.pop_f32())
+    val = vm.pop_f32()
+    if math.isinf(val):
+        raise ErrIntOverflow
+    if math.isnan(val):
+        raise ErrConvertToInt
+    f = math.trunc(val)
     if f >= __MaxUint64 or f < 0:
         raise ErrIntOverflow
-    if math.isnan(f):
-        raise ErrConvertToInt
     vm.push_u64(uint64(f))
 
 
 def i64_trunc_f64s(vm, _):
-    f = math.trunc(vm.pop_f64())
+    val = vm.pop_f64()
+    if math.isinf(val):
+        raise ErrIntOverflow
+    if math.isnan(val):
+        raise ErrConvertToInt
+    f = math.trunc(val)
     if f >= __MaxInt64 or f < __MinInt64:
         raise ErrIntOverflow
-    if math.isnan(f):
-        raise ErrConvertToInt
     vm.push_s64(int64(f))
 
 
 def i64_trunc_f64u(vm, _):
-    f = math.trunc(vm.pop_f64())
+    val = vm.pop_f64()
+    if math.isinf(val):
+        raise ErrIntOverflow
+    if math.isnan(val):
+        raise ErrConvertToInt
+    f = math.trunc(val)
     if f >= __MaxUint64 or f < 0:
         raise ErrIntOverflow
-    if math.isnan(f):
-        raise ErrConvertToInt
     vm.push_u64(uint64(f))
 
 

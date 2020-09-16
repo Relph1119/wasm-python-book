@@ -84,7 +84,10 @@ class OperandStack:
 
     def pop_f64(self):
         val = self.pop_numeric()
-        val = struct.unpack('>d', struct.pack('>q', val))[0]
+        try:
+            val = struct.unpack('>d', struct.pack('>q', val))[0]
+        except struct.error:
+            val = struct.unpack('>d', struct.pack('>Q', val))[0]
         return float64(val)
 
     def push_bool(self, val):
