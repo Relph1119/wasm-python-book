@@ -164,7 +164,7 @@ class ModuleValidator:
                 raise Exception("elem[%d]: unknown table: %d" % (i, elem.table))
             err = self.validate_const_expr(elem.offset, ValTypeI32)
             if err != "":
-                raise Exception("elem[%d]: %s", (i, err))
+                raise Exception("elem[%d]: %s" % (i, err))
             for j, func_idx in enumerate(elem.init):
                 if int(func_idx) >= self.get_func_count():
                     raise Exception("elem[%d][%d]: unknown function: %d" % (i, j, func_idx))

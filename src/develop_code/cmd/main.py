@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     # test_one_files
     test_wast_file_path = os.path.join(os.path.dirname(os.path.dirname(root_path)),
-                                       "spec", "test", "core", "data.wast")
+                                       "spec", "test", "core", "elem.wast")
     fake_args = ['--test-one', test_wast_file_path]
 
     # test_all_files

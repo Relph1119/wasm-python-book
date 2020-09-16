@@ -20,5 +20,5 @@ class GlobalVar:
 
     def set_as_u64(self, val):
         if self.type.mut != 1:
-            return ErrImmutableGlobal
+            raise ErrImmutableGlobal
         self.val = val

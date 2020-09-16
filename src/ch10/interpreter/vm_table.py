@@ -28,7 +28,7 @@ class Table(module.Table):
         self.check_idx(idx)
         elem = self.elems[idx]
         if elem is None:
-            return ErrUninitializedElem
+            raise ErrUninitializedElem
         return elem
 
     def set_elem(self, idx, elem):
