@@ -154,6 +154,7 @@ wat2wasm xxx.wat
 - float_literals.wast
 - float_memory.wast
 - float_misc.wast
+- i64.wast
 
 已测试通过的文件：
 - address.wast
