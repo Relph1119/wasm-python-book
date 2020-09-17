@@ -52,3 +52,8 @@ class ErrIntOverflow(Exception):
 class ErrConvertToInt(Exception):
     def __init__(self):
         super().__init__("invalid conversion to integer")
+
+
+class ErrIntDivideByZero(Exception):
+    def __init__(self):
+        super().__init__("integer divide by zero")

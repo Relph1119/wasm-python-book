@@ -13,7 +13,7 @@ import math
 from decimal import Decimal
 
 from interpreter import int32, int64, float32, float64, uint32, uint64, int8, int16
-from interpreter.errors import ErrIntOverflow, ErrConvertToInt
+from interpreter.errors import ErrIntOverflow, ErrConvertToInt, ErrIntDivideByZero
 
 __MaxInt32 = (1 << 31) - 1
 __MinInt32 = -1 << 31
@@ -274,7 +274,8 @@ def __trailing_zeros32(x):
 
     if x == 0:
         return 32
-    return int(de_bruijn32tab[(x & -x) * de_bruijn32 >> (32 - 5)])
+    val = (x & -x) * de_bruijn32 >> (32 - 5)
+    return int(de_bruijn32tab[val % len(de_bruijn32tab)])
 
 
 def __ones_count32(x):
@@ -323,21 +324,33 @@ def i32_div_s(vm, _):
     v2, v1 = vm.pop_s32(), vm.pop_s32()
     if v1 == __MinInt32 and v2 == -1:
         raise ErrIntOverflow
-    vm.push_s32(int(v1 / v2))
+    try:
+        val = int(v1 / v2)
+        vm.push_s32(val)
+    except ZeroDivisionError:
+        raise ErrIntDivideByZero
 
 
 def i32_div_u(vm, _):
     v2, v1 = vm.pop_u32(), vm.pop_u32()
-    vm.push_u32(int(v1 / v2))
+    try:
+        vm.push_u32(int(v1 / v2))
+    except ZeroDivisionError:
+        raise ErrIntDivideByZero
 
 
 def i32_rem_s(vm, _):
     v2, v1 = vm.pop_s32(), vm.pop_s32()
-    vm.push_s32(int(math.fmod(v1, v2)))
+    if v2 == 0:
+        raise ErrIntDivideByZero
+    val = int(math.fmod(v1, v2))
+    vm.push_s32(val)
 
 
 def i32_rem_u(vm, _):
     v2, v1 = vm.pop_u32(), vm.pop_u32()
+    if v2 == 0:
+        raise ErrIntDivideByZero
     vm.push_u32(int(math.fmod(v1, v2)))
 
 
@@ -410,7 +423,9 @@ def __trailing_zeros64(x):
 
     if x == 0:
         return 64
-    return int(de_bruijn64tab[(x & -x) * de_bruijn64 >> (64 - 6)])
+
+    val = (x & -x) * de_bruijn64 >> (64 - 6)
+    return int(de_bruijn64tab[val % len(de_bruijn64tab)])
 
 
 def __ones_count64(x):

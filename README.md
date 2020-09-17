@@ -146,6 +146,14 @@ wat2wasm xxx.wat
 - br_table.wast：运行时间太长
 - const.wast：float的精度问题超过小数点后面7位就不精确了
 - conversions.wast：float的精度问题
+- f32.wast
+- f32_bitwise.wast
+- f64.wast
+- f64_bitwise.wast
+- float_exprs.wast
+- float_literals.wast
+- float_memory.wast
+- float_misc.wast
 
 已测试通过的文件：
 - address.wast
@@ -163,5 +171,13 @@ wat2wasm xxx.wat
 - elem.wast
 - endianness.wast
 - exports.wast
+- f32_cmp.wast
+- f64_cmp.wast
+- fac.wast
+- forward.wast
+- func.wast
+- func_ptrs.wast
+- global.wast
+- i32.wast
 
 - table.wast

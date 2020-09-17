@@ -40,7 +40,7 @@ class WastTester:
             elif isinstance(cmd, Register):
                 self.instances[cmd.module_name] = self.instance
             elif isinstance(cmd, Action):
-                err = self.run_action(cmd)
+                _, err = self.run_action(cmd)
             elif isinstance(cmd, Assertion):
                 err = self.run_assertion(cmd)
             elif isinstance(cmd, Meta):
