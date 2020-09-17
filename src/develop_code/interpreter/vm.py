@@ -49,8 +49,7 @@ class VM(OperandStack, ControlStack, module.Module):
     def link_import(self, m, imp):
         exported = m.get_member(imp.name)
         if exported is None:
-            raise Exception("unknown import: %s.%s" %
-                            imp.module, imp.name)
+            raise Exception("unknown import: %s.%s" % (imp.module, imp.name))
 
         type_matched = False
         if isinstance(exported, module.Function):

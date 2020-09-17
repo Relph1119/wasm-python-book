@@ -61,6 +61,9 @@ def compile_script(input):
     p = new_parser(input, err_listener)
     ctx = p.script()
     err = err_listener.get_errors(input)
+    if isinstance(err, list):
+        print(err.error)
+        return None, err.error
     if err is not None:
         err = fill_detail(err, input)
         return None, err

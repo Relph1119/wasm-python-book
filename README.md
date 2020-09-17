@@ -179,5 +179,8 @@ wat2wasm xxx.wat
 - func_ptrs.wast
 - global.wast
 - i32.wast
+- if.wast
+- imports.wast
+- inline-module.wast
 
 - table.wast

@@ -24,7 +24,7 @@ class NativeModule(module.Module):
         self.exported[name] = x
 
     def get_member(self, name):
-        return self.exported[name]
+        return self.exported.get(name, None)
 
     def invoke_func(self, name, args):
         # TODO

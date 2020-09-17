@@ -68,11 +68,14 @@ class SyntaxErrors(list):
 
     def fill_detail(self, input):
         for err in self:
-            err.msg = get_err_detail(err.msg, err.token.symbol, input)
+            if hasattr(err.token, 'symbol'):
+                err.msg = get_err_detail(err.msg, err.token.symbol, input)
+            else:
+                err.msg = get_err_detail(err.msg, err.token, input)
 
     @property
     def error(self):
-        return '\n'.join(self)
+        return '\n'.join([err.msg for err in self])
 
 
 def get_err_detail(msg, token: Token, input):
