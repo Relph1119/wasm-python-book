@@ -154,9 +154,9 @@ wat2wasm xxx.wat
 - float_literals.wast
 - float_memory.wast
 - float_misc.wast
-- i64.wast
+- i64.wast：如果数值超过了uint64表示的最大数值，应显示为1的问题
 
-已测试通过的文件：
+已测试通过的文件：  
 - address.wast
 - align.wast
 - binary.wast
@@ -183,5 +183,4 @@ wat2wasm xxx.wat
 - if.wast
 - imports.wast
 - inline-module.wast
-
 - table.wast
